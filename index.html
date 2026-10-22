@@ -7056,4 +7056,164 @@
     }
   });
 </script>
+  <!-- ===================== ECOSTORE DEFINITIVE THEME & CUSTOM ENGINE ===================== -->
+<style id="ecostore-definitive-themes">
+  html[data-theme="forest"] {
+    --bg-primary: #0D1912; --bg-elevated: #14261C; --bg-subtle: #1B3326;
+    --bg-glass: rgba(13, 25, 18, 0.88); --bg-glass-strong: rgba(20, 38, 28, 0.96);
+    --text-primary: #ECFDF5; --text-secondary: #A7F3D0; --text-muted: #6EE7B7;
+    --accent-forest: #10B981; --accent-forest-hover: #059669; --accent-forest-soft: rgba(16, 185, 129, 0.2);
+    --accent-gaia: #34D399; --accent-gaia-soft: rgba(52, 211, 153, 0.18);
+    --border-subtle: #234231; --border-strong: #2E5740;
+  }
+  html[data-theme="ocean"] {
+    --bg-primary: #0B1622; --bg-elevated: #112233; --bg-subtle: #172E44;
+    --bg-glass: rgba(11, 22, 34, 0.88); --bg-glass-strong: rgba(17, 34, 51, 0.96);
+    --text-primary: #F0F9FF; --text-secondary: #BAE6FD; --text-muted: #7DD3FC;
+    --accent-forest: #0EA5E9; --accent-forest-hover: #0284C7; --accent-forest-soft: rgba(14, 165, 233, 0.2);
+    --accent-gaia: #38BDF8; --accent-gaia-soft: rgba(56, 189, 248, 0.18);
+    --border-subtle: #1E3A54; --border-strong: #294E70;
+  }
+  html[data-theme="sunset"] {
+    --bg-primary: #FFFDFB; --bg-elevated: #FFFFFF; --bg-subtle: #FFF4ED;
+    --bg-glass: rgba(255, 253, 251, 0.88); --bg-glass-strong: rgba(255, 255, 255, 0.96);
+    --text-primary: #27140E; --text-secondary: #683B2B; --text-muted: #9A6450;
+    --accent-forest: #EA580C; --accent-forest-hover: #C2410C; --accent-forest-soft: #FFEDD5;
+    --accent-gaia: #D97706; --accent-gaia-soft: #FEF3C7;
+    --border-subtle: #FED7AA; --border-strong: #FDBA74;
+  }
+  html[data-theme="custom"] {
+    --bg-primary: var(--custom-bg, #0F172A);
+    --bg-elevated: var(--custom-elevated, #1E293B);
+    --bg-subtle: var(--custom-subtle, #334155);
+    --text-primary: var(--custom-text, #F8FAFC);
+    --text-secondary: var(--custom-secondary, #CBD5E1);
+    --accent-forest: var(--custom-accent, #10B981);
+    --accent-forest-hover: #059669;
+    --border-subtle: #475569;
+    --border-strong: #64748B;
+  }
+
+  .theme-selector-wrap { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .theme-selector-pill {
+    padding: 0.35rem 0.65rem; border-radius: var(--radius-pill);
+    border: 1px solid var(--border-strong); background: var(--bg-elevated);
+    font-size: 0.76rem; font-weight: 700; color: var(--text-primary); cursor: pointer;
+  }
+  .custom-theme-modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+    z-index: 10050; display: flex; align-items: center; justify-content: center; padding: 1rem;
+  }
+  .custom-theme-card {
+    background: var(--bg-elevated); border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg); padding: 1.5rem; width: min(400px, 92vw); box-shadow: var(--shadow-lg); color: var(--text-primary);
+  }
+</style>
+
+<script id="ecostore-definitive-script">
+  window.addEventListener("DOMContentLoaded", () => {
+    const oldRibbon = document.getElementById("vip-coupon-ribbon");
+    if (oldRibbon) oldRibbon.remove();
+
+    const savedTheme = localStorage.getItem("ecostore_theme") || "light";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+
+    if (savedTheme === "custom") {
+      const bg = localStorage.getItem("ecostore_custom_bg") || "#0F172A";
+      const ele = localStorage.getItem("ecostore_custom_ele") || "#1E293B";
+      const acc = localStorage.getItem("ecostore_custom_acc") || "#10B981";
+      const root = document.documentElement;
+      root.style.setProperty("--custom-bg", bg);
+      root.style.setProperty("--custom-elevated", ele);
+      root.style.setProperty("--custom-subtle", ele);
+      root.style.setProperty("--custom-accent", acc);
+    }
+
+    let select = document.getElementById("ecostore-theme-select");
+    const headerActions = document.querySelector(".header-actions");
+
+    if (!select && headerActions) {
+      const wrap = document.createElement("div");
+      wrap.className = "theme-selector-wrap";
+      wrap.innerHTML = `
+        <select id="ecostore-theme-select" class="theme-selector-pill" aria-label="Select Theme">
+          <option value="light">☀️ Light</option>
+          <option value="dark">🌙 Dark</option>
+          <option value="forest">🌲 Forest</option>
+          <option value="ocean">🌊 Ocean</option>
+          <option value="sunset">🌅 Sunset</option>
+          <option value="custom">🎨 Custom...</option>
+        </select>
+      `;
+      headerActions.insertBefore(wrap, headerActions.firstChild);
+      select = document.getElementById("ecostore-theme-select");
+    }
+
+    if (select) {
+      select.value = savedTheme;
+      select.onchange = (e) => {
+        const val = e.target.value;
+        if (val === "custom") {
+          openCustomThemeModal();
+        } else {
+          document.documentElement.setAttribute("data-theme", val);
+          localStorage.setItem("ecostore_theme", val);
+        }
+        if (typeof TerraSound !== "undefined") TerraSound.playTap(600);
+      };
+    }
+
+    function openCustomThemeModal() {
+      const existing = document.getElementById("custom-theme-backdrop");
+      if (existing) existing.remove();
+
+      const modal = document.createElement("div");
+      modal.id = "custom-theme-backdrop";
+      modal.className = "custom-theme-modal";
+      modal.innerHTML = `
+        <div class="custom-theme-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+            <h3 style="font-size:1.1rem;font-weight:800;">🎨 Design Custom Theme</h3>
+            <button type="button" id="close-custom-modal" style="background:none;border:none;font-weight:800;cursor:pointer;color:var(--text-primary);">✕</button>
+          </div>
+          <div class="form-field" style="margin-bottom:0.75rem;">
+            <label style="font-size:0.8rem;font-weight:700;">Background Color</label>
+            <input type="color" id="custom-bg-input" value="#0F172A" style="width:100%;height:38px;border:none;cursor:pointer;border-radius:6px;">
+          </div>
+          <div class="form-field" style="margin-bottom:0.75rem;">
+            <label style="font-size:0.8rem;font-weight:700;">Card / Elevated Surface</label>
+            <input type="color" id="custom-elevated-input" value="#1E293B" style="width:100%;height:38px;border:none;cursor:pointer;border-radius:6px;">
+          </div>
+          <div class="form-field" style="margin-bottom:0.75rem;">
+            <label style="font-size:0.8rem;font-weight:700;">Primary Accent Color</label>
+            <input type="color" id="custom-accent-input" value="#10B981" style="width:100%;height:38px;border:none;cursor:pointer;border-radius:6px;">
+          </div>
+          <button type="button" class="btn btn-dopamine btn-full" id="save-custom-theme-btn" style="margin-top:0.5rem;">Apply Custom Theme</button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+
+      document.getElementById("close-custom-modal").onclick = () => modal.remove();
+      document.getElementById("save-custom-theme-btn").onclick = () => {
+        const bg = document.getElementById("custom-bg-input").value;
+        const ele = document.getElementById("custom-elevated-input").value;
+        const acc = document.getElementById("custom-accent-input").value;
+
+        const root = document.documentElement;
+        root.style.setProperty("--custom-bg", bg);
+        root.style.setProperty("--custom-elevated", ele);
+        root.style.setProperty("--custom-subtle", ele);
+        root.style.setProperty("--custom-accent", acc);
+        root.style.setProperty("--custom-text", "#FFFFFF");
+
+        root.setAttribute("data-theme", "custom");
+        localStorage.setItem("ecostore_theme", "custom");
+        localStorage.setItem("ecostore_custom_bg", bg);
+        localStorage.setItem("ecostore_custom_ele", ele);
+        localStorage.setItem("ecostore_custom_acc", acc);
+        modal.remove();
+      };
+    }
+  });
+</script>
 </body></html>
