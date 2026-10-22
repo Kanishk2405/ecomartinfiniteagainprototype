@@ -7216,4 +7216,25 @@
     }
   });
 </script>
+  <script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const select = document.getElementById("ecostore-theme-select");
+    if (select) {
+      // Check if Custom option already exists, if not, add it
+      if (!select.querySelector('option[value="custom"]')) {
+        const opt = document.createElement("option");
+        opt.value = "custom";
+        opt.textContent = "🎨 Custom...";
+        select.appendChild(opt);
+      }
+      
+      // Ensure change listener handles custom selection
+      select.addEventListener("change", (e) => {
+        if (e.target.value === "custom" && typeof openCustomThemeModal === "function") {
+          openCustomThemeModal();
+        }
+      });
+    }
+  });
+</script>
 </body></html>
