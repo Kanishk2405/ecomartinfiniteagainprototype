@@ -6919,4 +6919,141 @@
           <div style="font-weight:800;color:var(--text-primary);">Shopper in Chandigarh</div>
           <div style="color:var(--text-secondary);line-height:1.25;">earned +45 Purpose Points in 3D Quest • <strong>EcoStore Linen Zero-Wast...</strong></div>
         </div>
-      </div></body></html>
+      </div>
+<!-- ===================== ECOSTORE PROFESSIONAL THEME & CHECKOUT PATCH ===================== -->
+<style id="ecostore-professional-patch">
+  html[data-theme="custom"] {
+    --bg-primary: var(--custom-bg, #0F172A);
+    --bg-elevated: var(--custom-elevated, #1E293B);
+    --bg-subtle: var(--custom-subtle, #334155);
+    --text-primary: var(--custom-text, #F8FAFC);
+    --text-secondary: var(--custom-secondary, #CBD5E1);
+    --accent-forest: var(--custom-accent, #10B981);
+    --accent-forest-hover: #059669;
+    --border-subtle: #475569;
+    --border-strong: #64748B;
+  }
+
+  .theme-selector-wrap {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+  }
+  .theme-selector-pill {
+    padding: 0.35rem 0.65rem; border-radius: var(--radius-pill);
+    border: 1px solid var(--border-strong); background: var(--bg-elevated);
+    font-size: 0.76rem; font-weight: 700; color: var(--text-primary); cursor: pointer;
+  }
+
+  .custom-theme-modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+    z-index: 10050; display: flex; align-items: center; justify-content: center; padding: 1rem;
+  }
+  .custom-theme-card {
+    background: var(--bg-elevated); border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg); padding: 1.5rem; width: min(400px, 92vw); box-shadow: var(--shadow-lg);
+  }
+</style>
+
+<script id="ecostore-professional-script">
+  window.addEventListener("DOMContentLoaded", () => {
+    const oldRibbon = document.getElementById("vip-coupon-ribbon");
+    if (oldRibbon) oldRibbon.remove();
+
+    const savedTheme = localStorage.getItem("ecostore_theme") || "light";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+
+    const headerActions = document.querySelector(".header-actions");
+    if (headerActions && !document.getElementById("ecostore-theme-select")) {
+      const wrap = document.createElement("div");
+      wrap.className = "theme-selector-wrap";
+      wrap.innerHTML = `
+        <select id="ecostore-theme-select" class="theme-selector-pill" aria-label="Select Theme">
+          <option value="light">☀️ Light</option>
+          <option value="dark">🌙 Dark</option>
+          <option value="forest">🌲 Forest</option>
+          <option value="ocean">🌊 Ocean</option>
+          <option value="sunset">🌅 Sunset</option>
+          <option value="custom">🎨 Custom...</option>
+        </select>
+      `;
+      headerActions.insertBefore(wrap, headerActions.firstChild);
+      
+      const select = document.getElementById("ecostore-theme-select");
+      select.value = savedTheme;
+
+      select.addEventListener("change", (e) => {
+        const val = e.target.value;
+        if (val === "custom") {
+          openCustomThemeModal();
+        } else {
+          document.documentElement.setAttribute("data-theme", val);
+          localStorage.setItem("ecostore_theme", val);
+        }
+        if (typeof TerraSound !== "undefined") TerraSound.playTap(600);
+      });
+    }
+
+    function openCustomThemeModal() {
+      const existing = document.getElementById("custom-theme-backdrop");
+      if (existing) existing.remove();
+
+      const modal = document.createElement("div");
+      modal.id = "custom-theme-backdrop";
+      modal.className = "custom-theme-modal";
+      modal.innerHTML = `
+        <div class="custom-theme-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+            <h3 style="font-size:1.1rem;font-weight:800;">🎨 Design Custom Theme</h3>
+            <button type="button" id="close-custom-modal" style="background:none;border:none;font-weight:800;cursor:pointer;">✕</button>
+          </div>
+          <div class="form-field" style="margin-bottom:0.75rem;">
+            <label style="font-size:0.8rem;font-weight:700;">Background Color</label>
+            <input type="color" id="custom-bg-input" value="#0F172A" style="width:100%;height:38px;border:none;cursor:pointer;border-radius:6px;">
+          </div>
+          <div class="form-field" style="margin-bottom:0.75rem;">
+            <label style="font-size:0.8rem;font-weight:700;">Card / Elevated Surface</label>
+            <input type="color" id="custom-elevated-input" value="#1E293B" style="width:100%;height:38px;border:none;cursor:pointer;border-radius:6px;">
+          </div>
+          <div class="form-field" style="margin-bottom:0.75rem;">
+            <label style="font-size:0.8rem;font-weight:700;">Primary Accent Color</label>
+            <input type="color" id="custom-accent-input" value="#10B981" style="width:100%;height:38px;border:none;cursor:pointer;border-radius:6px;">
+          </div>
+          <button type="button" class="btn btn-dopamine btn-full" id="save-custom-theme-btn" style="margin-top:0.5rem;">Apply Custom Theme</button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+
+      document.getElementById("close-custom-modal").onclick = () => modal.remove();
+      document.getElementById("save-custom-theme-btn").onclick = () => {
+        const bg = document.getElementById("custom-bg-input").value;
+        const ele = document.getElementById("custom-elevated-input").value;
+        const acc = document.getElementById("custom-accent-input").value;
+
+        const root = document.documentElement;
+        root.style.setProperty("--custom-bg", bg);
+        root.style.setProperty("--custom-elevated", ele);
+        root.style.setProperty("--custom-subtle", ele);
+        root.style.setProperty("--custom-accent", acc);
+        root.style.setProperty("--custom-text", "#FFFFFF");
+
+        root.setAttribute("data-theme", "custom");
+        localStorage.setItem("ecostore_theme", "custom");
+        localStorage.setItem("ecostore_custom_bg", bg);
+        localStorage.setItem("ecostore_custom_ele", ele);
+        localStorage.setItem("ecostore_custom_acc", acc);
+        modal.remove();
+      };
+    }
+
+    if (savedTheme === "custom") {
+      const bg = localStorage.getItem("ecostore_custom_bg") || "#0F172A";
+      const ele = localStorage.getItem("ecostore_custom_ele") || "#1E293B";
+      const acc = localStorage.getItem("ecostore_custom_acc") || "#10B981";
+      const root = document.documentElement;
+      root.style.setProperty("--custom-bg", bg);
+      root.style.setProperty("--custom-elevated", ele);
+      root.style.setProperty("--custom-subtle", ele);
+      root.style.setProperty("--custom-accent", acc);
+    }
+  });
+</script>
+</body></html>
