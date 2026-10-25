@@ -7237,4 +7237,456 @@
     }
   });
 </script>
+  <!-- ===================== ECOSTORE LUXURY DESIGN SYSTEM & CUSTOM CURSOR ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style id="ecostore-luxury-overhaul">
+  /* 1. UNIFIED PREMIUM TYPOGRAPHY & COLOR TOKENS */
+  :root, html[data-theme="light"] {
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    --font-serif: 'Instrument Serif', Georgia, serif !important;
+    --font-mono: 'JetBrains Mono', monospace !important;
+
+    --bg-primary: #FBFBF9 !important;
+    --bg-elevated: #FFFFFF !important;
+    --bg-subtle: #F3F2EE !important;
+    --bg-glass: rgba(251, 251, 249, 0.85) !important;
+    --text-primary: #141413 !important;
+    --text-secondary: #575653 !important;
+    --text-muted: #8E8D8A !important;
+    --accent-forest: #183A2C !important;
+    --accent-forest-hover: #0F261C !important;
+    --border-subtle: rgba(20, 20, 19, 0.08) !important;
+    --border-strong: rgba(20, 20, 19, 0.16) !important;
+    --radius-sm: 8px !important;
+    --radius-md: 12px !important;
+    --radius-lg: 18px !important;
+    --radius-pill: 9999px !important;
+    --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
+    --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.05) !important;
+    --shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  html[data-theme="dark"] {
+    --bg-primary: #0C0D0C !important;
+    --bg-elevated: #141615 !important;
+    --bg-subtle: #1C1F1D !important;
+    --bg-glass: rgba(12, 13, 12, 0.85) !important;
+    --text-primary: #F4F4F0 !important;
+    --text-secondary: #A3A6A2 !important;
+    --text-muted: #686B68 !important;
+    --accent-forest: #2E6F54 !important;
+    --accent-forest-hover: #3B8969 !important;
+    --border-subtle: rgba(255, 255, 255, 0.08) !important;
+    --border-strong: rgba(255, 255, 255, 0.16) !important;
+  }
+
+  html[data-theme="forest"] {
+    --bg-primary: #0A140F !important;
+    --bg-elevated: #112119 !important;
+    --bg-subtle: #182E23 !important;
+    --bg-glass: rgba(10, 20, 15, 0.85) !important;
+    --text-primary: #ECFDF5 !important;
+    --text-secondary: #A7F3D0 !important;
+    --text-muted: #6EE7B7 !important;
+    --accent-forest: #10B981 !important;
+    --accent-forest-hover: #059669 !important;
+    --border-subtle: rgba(16, 185, 129, 0.14) !important;
+    --border-strong: rgba(16, 185, 129, 0.28) !important;
+  }
+
+  html[data-theme="ocean"] {
+    --bg-primary: #09131C !important;
+    --bg-elevated: #10202E !important;
+    --bg-subtle: #172D40 !important;
+    --bg-glass: rgba(9, 19, 28, 0.85) !important;
+    --text-primary: #F0F9FF !important;
+    --text-secondary: #BAE6FD !important;
+    --text-muted: #7DD3FC !important;
+    --accent-forest: #0EA5E9 !important;
+    --accent-forest-hover: #0284C7 !important;
+    --border-subtle: rgba(14, 165, 233, 0.14) !important;
+    --border-strong: rgba(14, 165, 233, 0.28) !important;
+  }
+
+  html[data-theme="sunset"] {
+    --bg-primary: #FDFBF9 !important;
+    --bg-elevated: #FFFFFF !important;
+    --bg-subtle: #F9F1EB !important;
+    --bg-glass: rgba(253, 251, 249, 0.85) !important;
+    --text-primary: #24140E !important;
+    --text-secondary: #6E473B !important;
+    --text-muted: #A37A6C !important;
+    --accent-forest: #C84B31 !important;
+    --accent-forest-hover: #A33922 !important;
+    --border-subtle: rgba(200, 75, 49, 0.12) !important;
+    --border-strong: rgba(200, 75, 49, 0.24) !important;
+  }
+
+  html[data-theme="custom"] {
+    --bg-primary: var(--custom-bg, #0F172A) !important;
+    --bg-elevated: var(--custom-elevated, #1E293B) !important;
+    --bg-subtle: var(--custom-subtle, #334155) !important;
+    --bg-glass: rgba(15, 23, 42, 0.85) !important;
+    --text-primary: var(--custom-text, #F8FAFC) !important;
+    --text-secondary: var(--custom-secondary, #CBD5E1) !important;
+    --accent-forest: var(--custom-accent, #10B981) !important;
+    --border-subtle: rgba(255, 255, 255, 0.12) !important;
+    --border-strong: rgba(255, 255, 255, 0.24) !important;
+  }
+
+  /* 2. GLOBAL FONT & SURFACE COHESION */
+  body {
+    font-family: var(--font-sans) !important;
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+    letter-spacing: -0.01em !important;
+    -webkit-font-smoothing: antialiased !important;
+  }
+
+  /* Remove messy background gradients on hero */
+  .hero-section, main, section {
+    background-image: none !important;
+  }
+
+  /* Editorial Serif Headings */
+  h1, .hero-title, .hero-title em, .hero-title span {
+    font-family: var(--font-serif) !important;
+    font-weight: 400 !important;
+    letter-spacing: -0.02em !important;
+    line-height: 1.05 !important;
+  }
+  .hero-title {
+    font-size: clamp(3.2rem, 6vw, 5.2rem) !important;
+    color: var(--text-primary) !important;
+  }
+  .hero-title em, .hero-title span {
+    font-style: italic !important;
+    color: var(--accent-forest) !important;
+  }
+
+  h2, h3, .section-title {
+    font-family: var(--font-sans) !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.025em !important;
+  }
+
+  /* 3. UNIFIED BUTTON SYSTEM (No more random mismatching buttons) */
+  button, .btn, .filter-pill, .preset-chip, .quick-chip {
+    font-family: var(--font-sans) !important;
+    font-weight: 500 !important;
+    font-size: 0.84rem !important;
+    letter-spacing: -0.005em !important;
+    border-radius: 10px !important;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: none !important;
+    text-transform: none !important;
+  }
+
+  /* Primary Solid Buttons */
+  .btn-primary, .btn-dopamine, button[type="submit"], .hero-cta-group .btn:first-child {
+    background: var(--text-primary) !important;
+    color: var(--bg-primary) !important;
+    border: 1px solid var(--text-primary) !important;
+    padding: 0.72rem 1.35rem !important;
+    font-weight: 600 !important;
+  }
+  .btn-primary:hover, .btn-dopamine:hover, .hero-cta-group .btn:first-child:hover {
+    background: var(--accent-forest) !important;
+    border-color: var(--accent-forest) !important;
+    color: #FFFFFF !important;
+    transform: translateY(-1px) !important;
+  }
+
+  /* Secondary / Outline Buttons */
+  .btn-secondary, .btn-outline, .btn-gaia, .hero-cta-group .btn:not(:first-child) {
+    background: var(--bg-elevated) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-strong) !important;
+    padding: 0.72rem 1.25rem !important;
+  }
+  .btn-secondary:hover, .btn-outline:hover, .btn-gaia:hover, .hero-cta-group .btn:not(:first-child):hover {
+    background: var(--bg-subtle) !important;
+    border-color: var(--text-primary) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  /* Category Filter Pills - Clean Architectural Tabs */
+  .filter-pill, .category-pill {
+    border-radius: 8px !important;
+    padding: 0.5rem 1rem !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    color: var(--text-secondary) !important;
+    font-weight: 500 !important;
+  }
+  .filter-pill:hover, .category-pill:hover {
+    color: var(--text-primary) !important;
+    background: var(--bg-subtle) !important;
+  }
+  .filter-pill.active, .category-pill.active {
+    background: var(--bg-elevated) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-strong) !important;
+    box-shadow: var(--shadow-sm) !important;
+    font-weight: 600 !important;
+  }
+
+  /* 4. CLEAN HEADER & NAVIGATION BAR */
+  header, .site-header, .navbar {
+    background: var(--bg-glass) !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+  }
+
+  /* Hide Top Promotional Clutter Bar & Random Floating Popups */
+  #vip-coupon-ribbon, .top-announcement-bar, .announcement-bar, .social-proof-floater {
+    display: none !important;
+  }
+
+  /* Clean Header Nav Links */
+  header nav a, .nav-links a {
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    color: var(--text-secondary) !important;
+    transition: color 0.2s ease !important;
+  }
+  header nav a:hover, .nav-links a:hover {
+    color: var(--text-primary) !important;
+  }
+
+  /* 5. LUXURY PRODUCT CARDS & CONTAINERS */
+  .product-card, .card, .hero-featured-card, .bundle-curator-card, .kit-builder-box {
+    background: var(--bg-elevated) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-lg) !important;
+    box-shadow: var(--shadow-sm) !important;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.28s ease !important;
+  }
+  .product-card:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: var(--shadow-md) !important;
+    border-color: var(--border-strong) !important;
+  }
+
+  /* Monospace Price & Score Tags for Teenage-Engineering-style precision */
+  .price, .product-price, .score-badge, .purpose-score {
+    font-family: var(--font-mono) !important;
+    letter-spacing: -0.03em !important;
+  }
+
+  /* 6. SLEek THEME DROPDOWN IN HEADER */
+  #ecostore-theme-select {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    background: var(--bg-elevated) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-strong) !important;
+    border-radius: 8px !important;
+    padding: 0.42rem 0.85rem !important;
+    font-family: var(--font-sans) !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+  }
+
+  /* 7. BESPOKE INTERACTIVE CUSTOM CURSOR */
+  @media (pointer: fine) {
+    * {
+      cursor: none !important;
+    }
+    #eco-cursor-dot, #eco-cursor-ring {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 999999;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+    #eco-cursor-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--text-primary);
+      transition: width 0.2s ease, height 0.2s ease, background 0.2s ease;
+    }
+    #eco-cursor-ring {
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--text-primary);
+      opacity: 0.35;
+      transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                  height 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                  background-color 0.25s ease,
+                  border-color 0.25s ease,
+                  opacity 0.25s ease;
+    }
+    body.cursor-hover #eco-cursor-dot {
+      width: 4px;
+      height: 4px;
+      background: var(--accent-forest);
+    }
+    body.cursor-hover #eco-cursor-ring {
+      width: 52px;
+      height: 52px;
+      opacity: 0.8;
+      border-color: var(--accent-forest);
+      background-color: rgba(16, 185, 129, 0.06);
+    }
+    body.cursor-click #eco-cursor-ring {
+      width: 26px;
+      height: 26px;
+      opacity: 1;
+    }
+  }
+</style>
+
+<script id="ecostore-luxury-engine">
+  (function() {
+    function initLuxuryExperience() {
+      // 1. FORCE UPGRADE ALL THEME SELECTORS ON THE PAGE
+      const savedTheme = localStorage.getItem("ecostore_theme") || "light";
+      document.documentElement.setAttribute("data-theme", savedTheme);
+
+      function applyCustomVars() {
+        const bg = localStorage.getItem("ecostore_custom_bg") || "#0F172A";
+        const ele = localStorage.getItem("ecostore_custom_ele") || "#1E293B";
+        const acc = localStorage.getItem("ecostore_custom_acc") || "#10B981";
+        const root = document.documentElement;
+        root.style.setProperty("--custom-bg", bg);
+        root.style.setProperty("--custom-elevated", ele);
+        root.style.setProperty("--custom-subtle", ele);
+        root.style.setProperty("--custom-accent", acc);
+        root.style.setProperty("--custom-text", "#F8FAFC");
+      }
+
+      if (savedTheme === "custom") applyCustomVars();
+
+      // Find any select in the header that has Light/Dark options and replace it cleanly
+      const allSelects = Array.from(document.querySelectorAll("header select, .header-actions select, #ecostore-theme-select"));
+      allSelects.forEach((sel) => {
+        sel.id = "ecostore-theme-select";
+        sel.innerHTML = `
+          <option value="light">☀️ Light</option>
+          <option value="dark">🌙 Dark</option>
+          <option value="forest">🌲 Forest</option>
+          <option value="ocean">🌊 Ocean</option>
+          <option value="sunset">🌅 Sunset</option>
+          <option value="custom">🎨 Custom Theme...</option>
+        `;
+        sel.value = savedTheme;
+
+        sel.onchange = (e) => {
+          const val = e.target.value;
+          if (val === "custom") {
+            openLuxuryThemeModal();
+          } else {
+            document.documentElement.setAttribute("data-theme", val);
+            localStorage.setItem("ecostore_theme", val);
+          }
+        };
+      });
+
+      // 2. CUSTOM THEME DESIGNER MODAL
+      window.openLuxuryThemeModal = function() {
+        const old = document.getElementById("custom-theme-backdrop");
+        if (old) old.remove();
+
+        const bgVal = localStorage.getItem("ecostore_custom_bg") || "#0F172A";
+        const eleVal = localStorage.getItem("ecostore_custom_ele") || "#1E293B";
+        const accVal = localStorage.getItem("ecostore_custom_acc") || "#10B981";
+
+        const modal = document.createElement("div");
+        modal.id = "custom-theme-backdrop";
+        modal.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:1rem;";
+        modal.innerHTML = `
+          <div style="background:var(--bg-elevated);color:var(--text-primary);border:1px solid var(--border-strong);border-radius:16px;padding:1.75rem;width:min(380px,92vw);box-shadow:0 24px 48px rgba(0,0,0,0.2);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+              <h3 style="margin:0;font-size:1.05rem;font-weight:600;">🎨 Bespoke Theme Studio</h3>
+              <button type="button" id="close-lux-modal" style="background:transparent;border:none;color:var(--text-primary);font-size:1.1rem;padding:0.2rem 0.5rem;">✕</button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.9rem;margin-bottom:1.4rem;">
+              <label style="font-size:0.8rem;font-weight:500;display:flex;justify-content:space-between;align-items:center;">
+                <span>Primary Canvas</span>
+                <input type="color" id="lux-bg" value="${bgVal}" style="width:48px;height:32px;border:none;border-radius:6px;background:none;">
+              </label>
+              <label style="font-size:0.8rem;font-weight:500;display:flex;justify-content:space-between;align-items:center;">
+                <span>Elevated Card Surface</span>
+                <input type="color" id="lux-ele" value="${eleVal}" style="width:48px;height:32px;border:none;border-radius:6px;background:none;">
+              </label>
+              <label style="font-size:0.8rem;font-weight:500;display:flex;justify-content:space-between;align-items:center;">
+                <span>Signature Accent</span>
+                <input type="color" id="lux-acc" value="${accVal}" style="width:48px;height:32px;border:none;border-radius:6px;background:none;">
+              </label>
+            </div>
+            <button type="button" id="save-lux-theme" class="btn-primary" style="width:100%;border-radius:10px;padding:0.75rem;">Apply Bespoke Palette</button>
+          </div>
+        `;
+        document.body.appendChild(modal);
+
+        document.getElementById("close-lux-modal").onclick = () => modal.remove();
+        document.getElementById("save-lux-theme").onclick = () => {
+          localStorage.setItem("ecostore_custom_bg", document.getElementById("lux-bg").value);
+          localStorage.setItem("ecostore_custom_ele", document.getElementById("lux-ele").value);
+          localStorage.setItem("ecostore_custom_acc", document.getElementById("lux-acc").value);
+          localStorage.setItem("ecostore_theme", "custom");
+          applyCustomVars();
+          document.documentElement.setAttribute("data-theme", "custom");
+          modal.remove();
+        };
+      };
+
+      // 3. INITIALIZE BUTTER-SMOOTH CUSTOM CURSOR
+      if (window.matchMedia("(pointer: fine)").matches && !document.getElementById("eco-cursor-dot")) {
+        const dot = document.createElement("div");
+        dot.id = "eco-cursor-dot";
+        const ring = document.createElement("div");
+        ring.id = "eco-cursor-ring";
+        document.body.appendChild(dot);
+        document.body.appendChild(ring);
+
+        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+        let ringX = mouseX, ringY = mouseY;
+
+        window.addEventListener("mousemove", (e) => {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+          dot.style.left = mouseX + "px";
+          dot.style.top = mouseY + "px";
+        }, { passive: true });
+
+        function animateCursor() {
+          ringX += (mouseX - ringX) * 0.18;
+          ringY += (mouseY - ringY) * 0.18;
+          ring.style.left = ringX + "px";
+          ring.style.top = ringY + "px";
+          requestAnimationFrame(animateCursor);
+        }
+        requestAnimationFrame(animateCursor);
+
+        document.addEventListener("mouseover", (e) => {
+          if (e.target.closest("a, button, select, input, .product-card, .filter-pill, [role='button']")) {
+            document.body.classList.add("cursor-hover");
+          }
+        });
+        document.addEventListener("mouseout", (e) => {
+          if (e.target.closest("a, button, select, input, .product-card, .filter-pill, [role='button']")) {
+            document.body.classList.remove("cursor-hover");
+          }
+        });
+        document.addEventListener("mousedown", () => document.body.classList.add("cursor-click"));
+        document.addEventListener("mouseup", () => document.body.classList.remove("cursor-click"));
+      }
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initLuxuryExperience);
+    } else {
+      initLuxuryExperience();
+    }
+  })();
+</script>
 </body></html>
