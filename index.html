@@ -7689,4 +7689,717 @@
     }
   })();
 </script>
+  <!-- ===================== ECOSTORE ATMOSPHERIC PALETTE STUDIO, AI THEME ENGINE & INSTANT KIT FIX ===================== -->
+<style id="ecostore-atmospheric-studio">
+  /* 1. ELEVATED ATMOSPHERIC PALETTES (MATCHING REFERENCE DESIGN) */
+  :root, html[data-theme="aquamar"], html[data-theme="forest"] {
+    --bg-primary: #071916 !important;
+    --bg-elevated: #0D2622 !important;
+    --bg-subtle: #13332D !important;
+    --bg-glass: rgba(10, 31, 27, 0.88) !important;
+    --text-primary: #F2FBF9 !important;
+    --text-secondary: #A6C8C1 !important;
+    --text-muted: #688F87 !important;
+    --accent-forest: #38C6A3 !important;
+    --accent-forest-hover: #2BA888 !important;
+    --border-subtle: rgba(56, 198, 163, 0.14) !important;
+    --border-strong: rgba(56, 198, 163, 0.28) !important;
+  }
+
+  html[data-theme="light"] {
+    --bg-primary: #F7F9F8 !important;
+    --bg-elevated: #FFFFFF !important;
+    --bg-subtle: #EBF1EE !important;
+    --bg-glass: rgba(247, 249, 248, 0.88) !important;
+    --text-primary: #0B201C !important;
+    --text-secondary: #435E58 !important;
+    --text-muted: #78948E !important;
+    --accent-forest: #177A63 !important;
+    --accent-forest-hover: #105947 !important;
+    --border-subtle: rgba(11, 32, 28, 0.08) !important;
+    --border-strong: rgba(11, 32, 28, 0.16) !important;
+  }
+
+  html[data-theme="ocean"] {
+    --bg-primary: #071521 !important;
+    --bg-elevated: #0D2133 !important;
+    --bg-subtle: #142E46 !important;
+    --bg-glass: rgba(7, 21, 33, 0.88) !important;
+    --text-primary: #F0F8FF !important;
+    --text-secondary: #9EC5E6 !important;
+    --text-muted: #5E89B0 !important;
+    --accent-forest: #38BDF8 !important;
+    --accent-forest-hover: #0EA5E9 !important;
+    --border-subtle: rgba(56, 189, 248, 0.15) !important;
+    --border-strong: rgba(56, 189, 248, 0.3) !important;
+  }
+
+  html[data-theme="sunset"] {
+    --bg-primary: #1B0F0D !important;
+    --bg-elevated: #281714 !important;
+    --bg-subtle: #38201C !important;
+    --bg-glass: rgba(27, 15, 13, 0.88) !important;
+    --text-primary: #FFF5F2 !important;
+    --text-secondary: #E2B8AD !important;
+    --text-muted: #9E7166 !important;
+    --accent-forest: #F97316 !important;
+    --accent-forest-hover: #EA580C !important;
+    --border-subtle: rgba(249, 115, 22, 0.16) !important;
+    --border-strong: rgba(249, 115, 22, 0.32) !important;
+  }
+
+  html[data-theme="lavender"] {
+    --bg-primary: #120E1E !important;
+    --bg-elevated: #1C162E !important;
+    --bg-subtle: #271F40 !important;
+    --bg-glass: rgba(18, 14, 30, 0.88) !important;
+    --text-primary: #F7F5FF !important;
+    --text-secondary: #C4B8E8 !important;
+    --text-muted: #8475B3 !important;
+    --accent-forest: #A855F7 !important;
+    --accent-forest-hover: #9333EA !important;
+    --border-subtle: rgba(168, 85, 247, 0.16) !important;
+    --border-strong: rgba(168, 85, 247, 0.32) !important;
+  }
+
+  html[data-theme="meadow"] {
+    --bg-primary: #0D190B !important;
+    --bg-elevated: #152712 !important;
+    --bg-subtle: #1E361A !important;
+    --bg-glass: rgba(13, 25, 11, 0.88) !important;
+    --text-primary: #F4FBF2 !important;
+    --text-secondary: #B7D9B0 !important;
+    --text-muted: #769C6E !important;
+    --accent-forest: #84CC16 !important;
+    --accent-forest-hover: #65A30D !important;
+    --border-subtle: rgba(132, 204, 22, 0.16) !important;
+    --border-strong: rgba(132, 204, 22, 0.32) !important;
+  }
+
+  html[data-theme="coral"] {
+    --bg-primary: #1C0D12 !important;
+    --bg-elevated: #2B141C !important;
+    --bg-subtle: #3B1C27 !important;
+    --bg-glass: rgba(28, 13, 18, 0.88) !important;
+    --text-primary: #FFF2F6 !important;
+    --text-secondary: #E8B4C4 !important;
+    --text-muted: #A66D7E !important;
+    --accent-forest: #FB7185 !important;
+    --accent-forest-hover: #F43F5E !important;
+    --border-subtle: rgba(251, 113, 133, 0.16) !important;
+    --border-strong: rgba(251, 113, 133, 0.32) !important;
+  }
+
+  html[data-theme="midnight"], html[data-theme="dark"] {
+    --bg-primary: #090D16 !important;
+    --bg-elevated: #111827 !important;
+    --bg-subtle: #1F2937 !important;
+    --bg-glass: rgba(9, 13, 22, 0.88) !important;
+    --text-primary: #F9FAFB !important;
+    --text-secondary: #9CA3AF !important;
+    --text-muted: #6B7280 !important;
+    --accent-forest: #6366F1 !important;
+    --accent-forest-hover: #4F46E5 !important;
+    --border-subtle: rgba(99, 102, 241, 0.16) !important;
+    --border-strong: rgba(99, 102, 241, 0.32) !important;
+  }
+
+  /* 2. RADIAL ATMOSPHERIC GLOW & PILL STYLING FROM SCREENSHOT */
+  body {
+    background-color: var(--bg-primary) !important;
+    background-image: radial-gradient(circle at 18% 22%, var(--border-subtle), transparent 48%),
+                      radial-gradient(circle at 85% 75%, var(--border-subtle), transparent 55%) !important;
+    background-attachment: fixed !important;
+    color: var(--text-primary) !important;
+    transition: background-color 0.35s ease, color 0.35s ease !important;
+  }
+
+  .btn, button {
+    border-radius: 9999px !important;
+  }
+
+  .hero-cta-group .btn:first-child, .btn-primary, .btn-dopamine {
+    background: var(--accent-forest) !important;
+    color: #061512 !important;
+    border: 1px solid var(--accent-forest) !important;
+    font-weight: 700 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
+  }
+  .hero-cta-group .btn:first-child:hover, .btn-primary:hover, .btn-dopamine:hover {
+    filter: brightness(1.08) !important;
+    transform: translateY(-2px) !important;
+  }
+
+  /* 3. FLOATING PALETTE POPOVER (EXACT MATCH TO SCREENSHOT) */
+  .eco-palette-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.95rem;
+    border-radius: 9999px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-strong);
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+  }
+
+  #eco-palette-popover {
+    position: fixed;
+    top: 68px;
+    right: 28px;
+    width: 315px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-strong);
+    border-radius: 18px;
+    padding: 1.15rem;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+    z-index: 100000;
+    backdrop-filter: blur(20px);
+    display: none;
+    color: var(--text-primary);
+  }
+  #eco-palette-popover.open {
+    display: block;
+    animation: popFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes popFadeIn {
+    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .palette-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem;
+    margin: 0.9rem 0;
+  }
+  .palette-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: 12px;
+    background: var(--bg-subtle);
+    border: 1px solid transparent;
+    color: var(--text-primary);
+    font-size: 0.76rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.18s ease;
+  }
+  .palette-chip:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+  }
+  .palette-chip.active {
+    border-color: var(--accent-forest);
+    background: rgba(56, 198, 163, 0.12);
+  }
+  .swatch-dots {
+    display: inline-flex;
+    gap: 3px;
+    flex-shrink: 0;
+  }
+  .swatch-dots span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* AI Theme Prompt Box inside Popover & GAIA Drawer */
+  .ai-theme-box {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .ai-theme-input-row {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.45rem;
+  }
+  .ai-theme-input {
+    flex: 1;
+    padding: 0.48rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 0.75rem;
+    outline: none;
+  }
+  .ai-theme-go {
+    padding: 0.48rem 0.85rem;
+    border-radius: 999px;
+    background: var(--accent-forest);
+    color: #061512;
+    font-weight: 700;
+    font-size: 0.74rem;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+</style>
+
+<script id="ecostore-atmospheric-engine">
+  (function() {
+    const PALETTES = [
+      { id: "forest", name: "Forest", dots: ["#34D399", "#10B981", "#A7F3D0"] },
+      { id: "ocean", name: "Ocean", dots: ["#38BDF8", "#0284C7", "#BAE6FD"] },
+      { id: "sunset", name: "Sunset", dots: ["#FB923C", "#EA580C", "#FED7AA"] },
+      { id: "lavender", name: "Lavender", dots: ["#C084FC", "#9333EA", "#E9D5FF"] },
+      { id: "meadow", name: "Meadow", dots: ["#A3E635", "#65A30D", "#D9F99D"] },
+      { id: "coral", name: "Coral", dots: ["#FB7185", "#E11D48", "#FECDD3"] },
+      { id: "midnight", name: "Midnight", dots: ["#818CF8", "#4F46E5", "#C7D2FE"] },
+      { id: "aquamar", name: "Aquamar", sub: "Made with AI", dots: ["#38C6A3", "#14B8A6", "#99F6E4"] },
+      { id: "light", name: "Daylight", dots: ["#177A63", "#EBF1EE", "#0B201C"] }
+    ];
+
+    // 1. AI PROMPT-TO-PALETTE GENERATOR ENGINE
+    function generateAIPaletteFromPrompt(promptText) {
+      const p = (promptText || "").toLowerCase();
+      let bg = "#071916", ele = "#0D2622", sub = "#13332D", text = "#F2FBF9", sec = "#A6C8C1", acc = "#38C6A3", name = "AI Bespoke";
+
+      if (p.includes("matcha") || p.includes("kyoto") || p.includes("zen") || p.includes("tea") || p.includes("bamboo")) {
+        bg = "#0E170C"; ele = "#162413"; sub = "#20331C"; text = "#F3F8F1"; sec = "#B8CEB0"; acc = "#86EFAC"; name = "Kyoto Matcha";
+      } else if (p.includes("desert") || p.includes("dune") || p.includes("terracotta") || p.includes("sand") || p.includes("warm") || p.includes("clay")) {
+        bg = "#1C110C"; ele = "#2B1B14"; sub = "#3B261D"; text = "#FDF7F4"; sec = "#DFBFB0"; acc = "#F97316"; name = "Terracotta Dune";
+      } else if (p.includes("cyber") || p.includes("neon") || p.includes("synth") || p.includes("matrix") || p.includes("future")) {
+        bg = "#070712"; ele = "#101026"; sub = "#19193B"; text = "#F5F3FF"; sec = "#A5B4FC"; acc = "#22D3EE"; name = "Neo Cyber";
+      } else if (p.includes("rose") || p.includes("blush") || p.includes("sakura") || p.includes("cherry") || p.includes("pink") || p.includes("floral")) {
+        bg = "#1A0D13"; ele = "#28151E"; sub = "#381E2A"; text = "#FFF5F8"; sec = "#E5B8C9"; acc = "#F472B6"; name = "Sakura Noir";
+      } else if (p.includes("gold") || p.includes("luxury") || p.includes("royal") || p.includes("champagne") || p.includes("obsidian") || p.includes("black")) {
+        bg = "#0A0A09"; ele = "#141412"; sub = "#1F1E1B"; text = "#FAF8F5"; sec = "#C7C0B3"; acc = "#EAB308"; name = "Obsidian Gold";
+      } else if (p.includes("arctic") || p.includes("ice") || p.includes("nordic") || p.includes("glacier") || p.includes("snow") || p.includes("minimal") || p.includes("clean")) {
+        bg = "#F4F7FA"; ele = "#FFFFFF"; sub = "#E5EEF7"; text = "#0F172A"; sec = "#475569"; acc = "#0284C7"; name = "Nordic Glacier";
+      } else if (p.includes("coffee") || p.includes("espresso") || p.includes("mocha") || p.includes("wood") || p.includes("walnut") || p.includes("cabin")) {
+        bg = "#140E0B"; ele = "#211813"; sub = "#2E221B"; text = "#FBF7F4"; sec = "#C9B6A9"; acc = "#D97706"; name = "Roasted Espresso";
+      } else {
+        // Procedural deterministic hash palette for any custom prompt
+        let hash = 0;
+        for (let i = 0; i < p.length; i++) hash = p.charCodeAt(i) + ((hash << 5) - hash);
+        const hue = Math.abs(hash) % 360;
+        bg = `hsl(${hue}, 38%, 7%)`;
+        ele = `hsl(${hue}, 35%, 12%)`;
+        sub = `hsl(${hue}, 32%, 17%)`;
+        text = `hsl(${hue}, 30%, 96%)`;
+        sec = `hsl(${hue}, 22%, 75%)`;
+        acc = `hsl(${(hue + 25) % 360}, 78%, 58%)`;
+        name = promptText.trim().slice(0, 14) || "AI Custom";
+      }
+
+      const root = document.documentElement;
+      root.style.setProperty("--custom-bg", bg);
+      root.style.setProperty("--custom-elevated", ele);
+      root.style.setProperty("--custom-subtle", sub);
+      root.style.setProperty("--custom-text", text);
+      root.style.setProperty("--custom-secondary", sec);
+      root.style.setProperty("--custom-accent", acc);
+
+      root.setAttribute("data-theme", "custom");
+      localStorage.setItem("ecostore_theme", "custom");
+      localStorage.setItem("ecostore_custom_bg", bg);
+      localStorage.setItem("ecostore_custom_ele", ele);
+      localStorage.setItem("ecostore_custom_sub", sub);
+      localStorage.setItem("ecostore_custom_text", text);
+      localStorage.setItem("ecostore_custom_sec", sec);
+      localStorage.setItem("ecostore_custom_acc", acc);
+      localStorage.setItem("ecostore_custom_name", name);
+
+      const triggerLabel = document.getElementById("eco-palette-trigger-label");
+      if (triggerLabel) triggerLabel.textContent = "✨ " + name;
+
+      return { name, bg, ele, acc };
+    }
+
+    // Expose globally so GAIA AI can call it
+    window.generateAIPaletteFromPrompt = generateAIPaletteFromPrompt;
+
+    function applySavedTheme() {
+      const saved = localStorage.getItem("ecostore_theme") || "aquamar";
+      if (saved === "custom") {
+        const root = document.documentElement;
+        root.style.setProperty("--custom-bg", localStorage.getItem("ecostore_custom_bg") || "#071916");
+        root.style.setProperty("--custom-elevated", localStorage.getItem("ecostore_custom_ele") || "#0D2622");
+        root.style.setProperty("--custom-subtle", localStorage.getItem("ecostore_custom_sub") || "#13332D");
+        root.style.setProperty("--custom-text", localStorage.getItem("ecostore_custom_text") || "#F2FBF9");
+        root.style.setProperty("--custom-secondary", localStorage.getItem("ecostore_custom_sec") || "#A6C8C1");
+        root.style.setProperty("--custom-accent", localStorage.getItem("ecostore_custom_acc") || "#38C6A3");
+      }
+      document.documentElement.setAttribute("data-theme", saved);
+    }
+
+    // 2. BUILD THE FLOATING PALETTE POPOVER (LIKE SCREENSHOT)
+    function initPalettePopover() {
+      applySavedTheme();
+
+      // Hide old basic select dropdowns
+      document.querySelectorAll("#ecostore-theme-select, .theme-selector-wrap select").forEach(el => {
+        el.style.display = "none";
+      });
+
+      const headerActions = document.querySelector(".header-actions") || document.querySelector("header");
+      if (headerActions && !document.getElementById("eco-palette-btn")) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.id = "eco-palette-btn";
+        btn.className = "eco-palette-trigger";
+        const currentTheme = localStorage.getItem("ecostore_theme") || "aquamar";
+        const currentName = currentTheme === "custom"
+          ? (localStorage.getItem("ecostore_custom_name") || "AI Custom")
+          : (PALETTES.find(p => p.id === currentTheme)?.name || "Aquamar");
+
+        btn.innerHTML = `<span>🎨</span> <span id="eco-palette-trigger-label">${currentName}</span>`;
+        headerActions.insertBefore(btn, headerActions.firstChild);
+
+        const pop = document.createElement("div");
+        pop.id = "eco-palette-popover";
+        pop.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.2rem;">
+            <div>
+              <div style="font-weight:700;font-size:0.9rem;">Choose your palette</div>
+              <div style="font-size:0.72rem;color:var(--text-secondary);">A little more you, a little more green</div>
+            </div>
+            <button type="button" id="close-palette-pop" style="background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:0.95rem;">✕</button>
+          </div>
+          <div class="palette-grid" id="eco-palette-grid"></div>
+          <div class="ai-theme-box">
+            <div style="font-size:0.73rem;font-weight:600;color:var(--accent-forest);display:flex;align-items:center;gap:0.35rem;">
+              <span>✨ Ask GAIA to design a custom theme</span>
+            </div>
+            <div class="ai-theme-input-row">
+              <input type="text" id="popover-ai-theme-input" class="ai-theme-input" placeholder="e.g. Kyoto Matcha, Obsidian Gold..." />
+              <button type="button" id="popover-ai-theme-btn" class="ai-theme-go">Design</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(pop);
+
+        const grid = pop.querySelector("#eco-palette-grid");
+        function renderChips() {
+          const activeId = document.documentElement.getAttribute("data-theme") || "aquamar";
+          grid.innerHTML = PALETTES.map(p => `
+            <button type="button" class="palette-chip ${activeId === p.id ? 'active' : ''}" data-palette="${p.id}">
+              <span class="swatch-dots">
+                <span style="background:${p.dots[0]}"></span>
+                <span style="background:${p.dots[1]}"></span>
+                <span style="background:${p.dots[2]}"></span>
+              </span>
+              <span style="display:flex;flex-direction:column;line-height:1.15;">
+                <span>${p.name}</span>
+                ${p.sub ? `<small style="font-size:0.62rem;color:var(--accent-forest);font-weight:500;">${p.sub}</small>` : ''}
+              </span>
+            </button>
+          `).join("");
+
+          grid.querySelectorAll(".palette-chip").forEach(chip => {
+            chip.onclick = () => {
+              const pid = chip.getAttribute("data-palette");
+              document.documentElement.setAttribute("data-theme", pid);
+              localStorage.setItem("ecostore_theme", pid);
+              const found = PALETTES.find(x => x.id === pid);
+              if (found) document.getElementById("eco-palette-trigger-label").textContent = found.name;
+              renderChips();
+            };
+          });
+        }
+        renderChips();
+
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          pop.classList.toggle("open");
+          renderChips();
+        };
+        pop.querySelector("#close-palette-pop").onclick = () => pop.classList.remove("open");
+        document.addEventListener("click", (e) => {
+          if (!pop.contains(e.target) && e.target !== btn) pop.classList.remove("open");
+        });
+
+        // AI Theme generation from Popover
+        const aiInput = pop.querySelector("#popover-ai-theme-input");
+        const aiBtn = pop.querySelector("#popover-ai-theme-btn");
+        const runPopAI = () => {
+          const val = aiInput.value.trim();
+          if (!val) return;
+          generateAIPaletteFromPrompt(val);
+          renderChips();
+          aiInput.value = "";
+        };
+        aiBtn.onclick = runPopAI;
+        aiInput.addEventListener("keydown", (e) => { if (e.key === "Enter") runPopAI(); });
+      }
+    }
+
+    // 3. ADD "✨ AI THEME STUDIO" INSIDE GAIA AI DRAWER
+    function enhanceGaiaDrawerWithThemeAI() {
+      const gaiaInput = document.querySelector("#gaia-input, .gaia-input-row input, [placeholder*='GAIA'], [placeholder*='Gaia']");
+      if (!gaiaInput) return;
+      const container = gaiaInput.closest("form, .gaia-footer, .chat-input-area, div");
+      if (container && !document.getElementById("gaia-ai-theme-bar")) {
+        const bar = document.createElement("div");
+        bar.id = "gaia-ai-theme-bar";
+        bar.style.cssText = "display:flex;align-items:center;gap:0.4rem;padding:0.45rem 0.75rem;margin-bottom:0.4rem;background:var(--bg-subtle);border:1px solid var(--border-strong);border-radius:12px;";
+        bar.innerHTML = `
+          <span style="font-size:0.74rem;font-weight:700;color:var(--accent-forest);white-space:nowrap;">🎨 AI Theme:</span>
+          <input type="text" id="gaia-theme-prompt-input" placeholder="Describe a mood (e.g. Midnight Forest, Warm Clay)..." style="flex:1;background:transparent;border:none;color:var(--text-primary);font-size:0.74rem;outline:none;" />
+          <button type="button" id="gaia-theme-apply-btn" style="background:var(--accent-forest);color:#061512;border:none;padding:0.32rem 0.7rem;border-radius:999px;font-size:0.72rem;font-weight:700;cursor:pointer;">Apply Theme</button>
+        `;
+        container.parentNode.insertBefore(bar, container);
+
+        const tInput = bar.querySelector("#gaia-theme-prompt-input");
+        const tBtn = bar.querySelector("#gaia-theme-apply-btn");
+        const triggerGaiaTheme = () => {
+          const promptVal = tInput.value.trim() || gaiaInput.value.trim();
+          if (!promptVal) return;
+          const res = generateAIPaletteFromPrompt(promptVal);
+          tInput.value = "";
+          tBtn.textContent = "✓ " + res.name;
+          setTimeout(() => { tBtn.textContent = "Apply Theme"; }, 1800);
+        };
+        tBtn.onclick = triggerGaiaTheme;
+        tInput.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); triggerGaiaTheme(); } });
+      }
+    }
+
+    // 4. FIX THE 3-ITEM DAILY KIT CURATOR (INSTANT, PROMPT-ACCURATE & BUDGET-AWARE)
+    function fixKitBuilder() {
+      // Locate the Curate Kit button and input
+      const buttons = Array.from(document.querySelectorAll("button"));
+      const curateBtn = buttons.find(b => /curate\s*kit/i.test(b.textContent));
+      if (!curateBtn) return;
+
+      const kitSection = curateBtn.closest("section, .bundle-curator-card, .kit-builder-box, div");
+      if (!kitSection) return;
+
+      const promptInput = kitSection.querySelector("input[type='text'], input:not([type]), textarea");
+      const budgetSelect = kitSection.querySelector("select");
+
+      // Clone button to strip slow/broken preset listeners
+      const newBtn = curateBtn.cloneNode(true);
+      curateBtn.parentNode.replaceChild(newBtn, curateBtn);
+
+      // Find or create results container right inside the kit section
+      let resultsBox = document.getElementById("instant-kit-results");
+      if (!resultsBox) {
+        // Also look for existing kit grid to replace
+        const existingGrid = kitSection.querySelector(".kit-results, .bundle-results, #bundle-results, #kit-results");
+        if (existingGrid) {
+          resultsBox = existingGrid;
+        } else {
+          resultsBox = document.createElement("div");
+          resultsBox.id = "instant-kit-results";
+          resultsBox.style.marginTop = "1.25rem";
+          kitSection.appendChild(resultsBox);
+        }
+      }
+
+      function curateCustomKitNow(customPromptText) {
+        const rawQuery = (customPromptText ?? (promptInput ? promptInput.value : "")).trim();
+        if (promptInput && customPromptText) promptInput.value = customPromptText;
+
+        // Parse budget number from select (e.g. "Up to ₹2,800" -> 2800)
+        let maxBudget = 3500;
+        if (budgetSelect && budgetSelect.value) {
+          const numMatch = (budgetSelect.options[budgetSelect.selectedIndex]?.text || budgetSelect.value).replace(/,/g, "").match(/\d+/);
+          if (numMatch) maxBudget = parseInt(numMatch[0], 10);
+        }
+
+        // Gather catalogue items from global CATALOGUE or DOM product cards
+        let pool = [];
+        if (typeof CATALOGUE !== "undefined" && Array.isArray(CATALOGUE) && CATALOGUE.length > 0) {
+          pool = CATALOGUE;
+        } else if (typeof window.PRODUCTS !== "undefined" && Array.isArray(window.PRODUCTS)) {
+          pool = window.PRODUCTS;
+        } else {
+          // Scrape from rendered product cards on the page if global array is scoped
+          document.querySelectorAll(".product-card").forEach((card, idx) => {
+            const name = card.querySelector("h3, h4, .product-title")?.textContent?.trim() || ("Essential #" + (idx + 1));
+            const priceTxt = card.querySelector(".price, .product-price")?.textContent || "750";
+            const price = parseInt(priceTxt.replace(/[^\d]/g, ""), 10) || 750;
+            const category = card.getAttribute("data-category") || card.textContent || "Everyday";
+            const img = card.querySelector("img")?.src || "";
+            pool.push({ id: idx + 1, name, price, category, image: img, description: card.textContent });
+          });
+        }
+
+        if (!pool.length) return;
+
+        // Semantic Keyword Scoring based on the user's exact prompt
+        const tokens = rawQuery.toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 2);
+        const synonymMap = {
+          coffee: ["mug", "flask", "tumbler", "brew", "cup", "filter", "kitchen", "morning", "thermal", "glass", "kettle"],
+          morning: ["coffee", "mug", "flask", "brush", "bamboo", "journal", "towel", "soap"],
+          study: ["notebook", "pen", "desk", "stationery", "sleeve", "laptop", "organizer", "lamp", "pencil", "paper"],
+          student: ["notebook", "pen", "stationery", "backpack", "tote", "bottle", "sleeve", "lunch", "bento"],
+          college: ["notebook", "pen", "laptop", "sleeve", "bottle", "flask", "tote", "bento"],
+          desk: ["stationery", "notebook", "pen", "organizer", "coaster", "mug", "lamp", "sleeve"],
+          travel: ["flask", "bottle", "tote", "pouch", "bamboo", "cutlery", "soap", "backpack", "bag", "commuter", "razor"],
+          commuter: ["flask", "bottle", "bento", "lunch", "tote", "sleeve", "bag", "coffee", "travel"],
+          kitchen: ["skillet", "bento", "jar", "spice", "linen", "cloth", "brush", "soap", "glass", "container", "bowl", "board"],
+          cooking: ["skillet", "cast", "iron", "spice", "jar", "board", "knife", "apron", "kitchen"],
+          home: ["linen", "candle", "towel", "jar", "basket", "diffuser", "blanket", "sanctuary", "soap"],
+          evening: ["candle", "tea", "linen", "journal", "bath", "soap", "towel", "sanctuary", "home"],
+          gym: ["bottle", "flask", "towel", "tote", "soap", "deodorant", "bag"],
+          plastic: ["steel", "glass", "bamboo", "linen", "brass", "hemp", "cork", "reusable", "refillable"],
+          gift: ["set", "kit", "brass", "linen", "flask", "candle", "journal"]
+        };
+
+        // Expand prompt tokens with synonyms
+        const expandedTokens = new Set(tokens);
+        tokens.forEach(t => {
+          Object.keys(synonymMap).forEach(k => {
+            if (t.includes(k) || k.includes(t)) {
+              synonymMap[k].forEach(s => expandedTokens.add(s));
+            }
+          });
+        });
+
+        const scored = pool.map(item => {
+          const hay = `${item.name || ""} ${item.category || ""} ${item.material || ""} ${item.description || ""} ${(item.tags || []).join(" ")}`.toLowerCase();
+          let score = 0;
+          tokens.forEach(tok => {
+            if ((item.name || "").toLowerCase().includes(tok)) score += 35;
+            if ((item.category || "").toLowerCase().includes(tok)) score += 25;
+            if (hay.includes(tok)) score += 15;
+          });
+          expandedTokens.forEach(tok => {
+            if (hay.includes(tok)) score += 8;
+          });
+          // Slight deterministic variation from query characters so different prompts always yield distinct kits
+          const charSeed = rawQuery.split("").reduce((acc, c, i) => acc + c.charCodeAt(0) * (i + 1), 0);
+          const tieBreaker = ((item.id || item.name.length) * (charSeed || 7)) % 11;
+          return { item, score: score + tieBreaker };
+        }).sort((a, b) => b.score - a.score);
+
+        // Pick 3 distinct items that fit within maxBudget
+        const picked = [];
+        let runningTotal = 0;
+        const usedCategories = new Set();
+
+        // Pass 1: High relevance + fits budget + diverse categories
+        for (const entry of scored) {
+          if (picked.length >= 3) break;
+          const p = entry.item.price || 700;
+          const remainingSlots = 3 - picked.length - 1;
+          const minReserve = remainingSlots * 320;
+          if (runningTotal + p + minReserve <= maxBudget && !picked.includes(entry.item)) {
+            picked.push(entry.item);
+            runningTotal += p;
+            usedCategories.add(entry.item.category);
+          }
+        }
+
+        // Pass 2: If budget was super tight, fill remaining slots with lowest-priced relevant items
+        if (picked.length < 3) {
+          const byPrice = [...scored].sort((a, b) => (a.item.price || 500) - (b.item.price || 500));
+          for (const entry of byPrice) {
+            if (picked.length >= 3) break;
+            if (!picked.includes(entry.item)) {
+              picked.push(entry.item);
+              runningTotal += (entry.item.price || 500);
+            }
+          }
+        }
+
+        const bundleDiscount = Math.round(runningTotal * 0.12);
+        const finalPrice = runningTotal - bundleDiscount;
+        const promptLabel = rawQuery ? `"${rawQuery}"` : "Bespoke Everyday Routine";
+
+        resultsBox.innerHTML = `
+          <div style="background:var(--bg-subtle);border:1px solid var(--border-strong);border-radius:16px;padding:1.25rem;animation:popFadeIn 0.22s ease;">
+            <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0.75rem;margin-bottom:1rem;">
+              <div>
+                <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-forest);">✨ AI Curated 3-Item Kit • Tailored to ${promptLabel}</span>
+                <h4 style="margin:0.2rem 0 0;font-size:1.05rem;font-weight:700;color:var(--text-primary);">Custom Purpose Bundle (Budget: Up to ₹${maxBudget.toLocaleString("en-IN")})</h4>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:0.75rem;color:var(--text-secondary);text-decoration:line-through;">₹${runningTotal.toLocaleString("en-IN")}</div>
+                <div style="font-size:1.15rem;font-weight:800;color:var(--accent-forest);">₹${finalPrice.toLocaleString("en-IN")} <small style="font-size:0.7rem;font-weight:600;">(Save 12%)</small></div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:0.85rem;">
+              ${picked.map((prod, idx) => `
+                <div style="background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:14px;padding:0.85rem;display:flex;flex-direction:column;justify-content:space-between;gap:0.6rem;">
+                  <div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.45rem;">
+                      <span style="font-size:0.68rem;font-weight:700;color:var(--accent-forest);background:rgba(56,198,163,0.12);padding:0.2rem 0.55rem;border-radius:999px;">Item 0${idx + 1} • ${prod.category || "Essential"}</span>
+                      <span style="font-family:var(--font-mono);font-size:0.82rem;font-weight:700;">₹${(prod.price || 750).toLocaleString("en-IN")}</span>
+                    </div>
+                    <div style="font-weight:700;font-size:0.9rem;color:var(--text-primary);margin-bottom:0.25rem;">${prod.name}</div>
+                    <div style="font-size:0.74rem;color:var(--text-secondary);line-height:1.35;">Matched for your ${rawQuery ? rawQuery.slice(0, 28) : "daily"} setup • Built for circular longevity.</div>
+                  </div>
+                  <button type="button" class="btn-secondary kit-single-add" data-prod-id="${prod.id || ''}" data-prod-name="${(prod.name || '').replace(/"/g, '&quot;')}" style="width:100%;padding:0.45rem;font-size:0.75rem;font-weight:600;cursor:pointer;">+ Add Item to Cart</button>
+                </div>
+              `).join("")}
+            </div>
+            <div style="margin-top:1rem;display:flex;justify-content:flex-end;">
+              <button type="button" id="add-entire-curated-kit" class="btn-primary" style="padding:0.65rem 1.4rem;font-size:0.82rem;cursor:pointer;">+ Add All 3 Items to Cart (₹${finalPrice.toLocaleString("en-IN")})</button>
+            </div>
+          </div>
+        `;
+
+        // Wire up Add to Cart buttons seamlessly with the store's cart function
+        resultsBox.querySelectorAll(".kit-single-add").forEach((b, i) => {
+          b.onclick = () => {
+            const item = picked[i];
+            if (typeof addToCart === "function" && item?.id) addToCart(item.id);
+            b.textContent = "✓ Added to Cart";
+          };
+        });
+
+        const addAllBtn = resultsBox.querySelector("#add-entire-curated-kit");
+        if (addAllBtn) {
+          addAllBtn.onclick = () => {
+            picked.forEach(item => {
+              if (typeof addToCart === "function" && item?.id) addToCart(item.id);
+            });
+            addAllBtn.textContent = "✓ Full 3-Item Kit Added to Cart!";
+          };
+        }
+      }
+
+      newBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        curateCustomKitNow();
+      };
+
+      if (promptInput) {
+        promptInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            e.stopPropagation();
+            curateCustomKitNow();
+          }
+        });
+      }
+
+      // Also wire preset chips below input so clicking them updates input AND runs instant curator
+      kitSection.querySelectorAll(".preset-chip, button:not(#add-entire-curated-kit)").forEach(chip => {
+        if (chip !== newBtn && !chip.classList.contains("kit-single-add") && chip.textContent.trim().length > 4 && !/curate/i.test(chip.textContent)) {
+          chip.onclick = (e) => {
+            e.preventDefault();
+            curateCustomKitNow(chip.textContent.trim());
+          };
+        }
+      });
+    }
+
+    function bootAll() {
+      initPalettePopover();
+      enhanceGaiaDrawerWithThemeAI();
+      fixKitBuilder();
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", bootAll);
+    } else {
+      bootAll();
+    }
+  })();
+</script>
 </body></html>
