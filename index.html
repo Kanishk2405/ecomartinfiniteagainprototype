@@ -10039,4 +10039,315 @@ ${JSON.stringify(compactPool)}`;
     setTimeout(initV5Kit, 300);
   })();
 </script>
+  <!-- ===================== ECOSTORE LUXURY HEADER BUTTONS & WISHLIST OVERHAUL ===================== -->
+<style id="ecostore-luxury-wishlist-patch">
+  /* 1. PROFESSIONAL ARCHITECTURAL HEADER BUTTONS (Replacing Gimmicky Pills) */
+  #ecoloop-header-btn, #gaia-header-btn, .header-feature-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    padding: 0.38rem 0.85rem !important;
+    background: var(--bg-elevated) !important;
+    border: 1px solid var(--border-strong) !important;
+    border-radius: var(--radius-pill, 9999px) !important;
+    color: var(--text-primary) !important;
+    font-family: var(--font-sans, inherit) !important;
+    font-size: 0.76rem !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.01em !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: var(--shadow-sm, none) !important;
+  }
+  #ecoloop-header-btn:hover, #gaia-header-btn:hover, .header-feature-pill:hover {
+    background: var(--bg-subtle) !important;
+    border-color: var(--text-primary) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  /* 2. ARCHITECTURAL LUXURY WISHLIST SLIDE-OVER DRAWER */
+  .eco-wishlist-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    z-index: 100050; opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .eco-wishlist-backdrop.open { opacity: 1; visibility: visible; }
+
+  .eco-wishlist-panel {
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 92vw);
+    background: var(--bg-elevated, #FFFFFF); color: var(--text-primary, #141413);
+    border-left: 1px solid var(--border-subtle, rgba(0,0,0,0.08));
+    box-shadow: -20px 0 50px rgba(0,0,0,0.15); z-index: 100051;
+    display: flex; flex-direction: column; transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .eco-wishlist-backdrop.open .eco-wishlist-panel { transform: translateX(0); }
+
+  .eco-wishlist-header {
+    padding: 1.5rem; border-bottom: 1px solid var(--border-subtle);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .eco-wishlist-title {
+    font-family: var(--font-serif, Georgia, serif); font-size: 1.5rem; font-weight: 400; margin: 0;
+  }
+  .eco-wishlist-close {
+    background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-primary);
+    padding: 0.3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s ease;
+  }
+  .eco-wishlist-close:hover { background: var(--bg-subtle); }
+
+  .eco-wishlist-body {
+    flex: 1; overflow-y: auto; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem;
+  }
+  .eco-wish-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.85rem;
+    padding: 0.85rem; background: var(--bg-subtle, #F3F2EE); border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+  }
+  .eco-wish-info { display: flex; align-items: center; gap: 0.75rem; flex: 1; min-width: 0; }
+  .eco-wish-img {
+    width: 54px; height: 54px; border-radius: 8px; object-fit: cover; background: var(--bg-primary); flex-shrink: 0;
+  }
+  .eco-wish-name {
+    font-weight: 600; font-size: 0.86rem; color: var(--text-primary); margin: 0 0 0.15rem 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .eco-wish-price {
+    font-family: var(--font-mono, monospace); font-size: 0.8rem; color: var(--text-secondary);
+  }
+  .eco-wish-actions { display: flex; align-items: center; gap: 0.5rem; }
+  
+  /* Wishlist Heart Active State on Product Cards */
+  button[data-wishlist], .wishlist-btn, .product-card button[aria-label*="wishlist" i] {
+    cursor: pointer; transition: transform 0.2s ease, color 0.2s ease;
+  }
+  button[data-wishlist].active svg, .wishlist-btn.active svg, button[data-wishlist].active, .wishlist-btn.active {
+    fill: #E11D48 !important; color: #E11D48 !important; stroke: #E11D48 !important;
+  }
+</style>
+
+<script id="ecostore-luxury-wishlist-engine">
+  (function() {
+    function initLuxuryWishlistAndHeader() {
+      // 1. ELEVATE ECOLOOP & GAIA ADVISOR BUTTONS IN HEADER
+      const oldEcoLoop = document.querySelector("#ecoloop-btn, [href*='EcoLoop'], button:has(span), a:has(span)");
+      document.querySelectorAll("header button, header a").forEach(el => {
+        const text = el.textContent || "";
+        if (text.includes("EcoLoop") && !document.getElementById("ecoloop-header-btn")) {
+          el.id = "ecoloop-header-btn";
+          el.className = "";
+          el.innerHTML = `<span>♻️</span><span>EcoLoop 3D</span>`;
+        }
+        if ((text.includes("Gaia Advisor") || text.includes("Eco Agent")) && !document.getElementById("gaia-header-btn")) {
+          el.id = "gaia-header-btn";
+          el.className = "";
+          el.innerHTML = `<span>✦</span><span>Gaia Advisor</span>`;
+        }
+      });
+
+      // 2. CREATE LUXURY WISHLIST DRAWER
+      if (!document.getElementById("eco-wishlist-backdrop")) {
+        const backdrop = document.createElement("div");
+        backdrop.id = "eco-wishlist-backdrop";
+        backdrop.className = "eco-wishlist-backdrop";
+        backdrop.innerHTML = `
+          <div class="eco-wishlist-panel">
+            <div class="eco-wishlist-header">
+              <h2 class="eco-wishlist-title">Saved Wishlist</h2>
+              <button type="button" class="eco-wishlist-close" id="eco-close-wishlist">✕</button>
+            </div>
+            <div class="eco-wishlist-body" id="eco-wishlist-items">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        `;
+        document.body.appendChild(backdrop);
+
+        backdrop.onclick = (e) => {
+          if (e.target === backdrop) backdrop.classList.remove("open");
+        };
+        document.getElementById("eco-close-wishlist").onclick = () => backdrop.classList.remove("open");
+      }
+
+      // Find header heart icon to toggle wishlist drawer
+      document.querySelectorAll("header button, header div, header a").forEach(el => {
+        if (el.querySelector("svg") && (el.innerHTML.includes("M21") || el.innerHTML.includes("heart") || el.getAttribute("aria-label")?.includes("wishlist"))) {
+          el.id = "eco-header-heart-trigger";
+          el.style.cursor = "pointer";
+          el.onclick = (e) => {
+            e.preventDefault();
+            renderWishlistDrawer();
+            document.getElementById("eco-wishlist-backdrop").classList.add("open");
+          };
+        }
+      });
+
+      // 3. ROBUST WISHLIST STORAGE & PRODUCT CARD SYNC
+      function getWishlist() {
+        try {
+          return JSON.parse(localStorage.getItem("ecostore_wishlist") || "[]");
+        } catch { return []; }
+      }
+
+      function saveWishlist(list) {
+        localStorage.setItem("ecostore_wishlist", JSON.stringify(list));
+        updateWishlistBadge(list.length);
+      }
+
+      function updateWishlistBadge(count) {
+        document.querySelectorAll("header").forEach(h => {
+          // Find badge near heart
+          const hearts = h.querySelectorAll("button, div, span");
+          hearts.forEach(el => {
+            if (el.querySelector("svg") && (el.innerHTML.includes("heart") || el.innerHTML.includes("M21"))) {
+              let badge = el.querySelector(".wishlist-count-badge");
+              if (count > 0) {
+                if (!badge) {
+                  badge = document.createElement("span");
+                  badge.className = "wishlist-count-badge";
+                  badge.style.cssText = "position:absolute;top:-4px;right:-4px;background:#E11D48;color:#fff;font-size:0.6rem;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;";
+                  el.style.position = "relative";
+                  el.appendChild(badge);
+                }
+                badge.textContent = count;
+              } else if (badge) {
+                badge.remove();
+              }
+            }
+          });
+        });
+      }
+
+      function renderWishlistDrawer() {
+        const container = document.getElementById("eco-wishlist-items");
+        if (!container) return;
+        const list = getWishlist();
+
+        if (list.length === 0) {
+          container.innerHTML = `
+            <div style="text-align:center;padding:3rem 1rem;color:var(--text-secondary);">
+              <div style="font-size:2rem;margin-bottom:0.5rem;">🤍</div>
+              <h4 style="margin:0 0 0.3rem;font-size:1.05rem;font-weight:600;color:var(--text-primary);">Your wishlist is empty</h4>
+              <p style="margin:0;font-size:0.82rem;">Tap the heart icon on any product to save it to your private atelier collection.</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = list.map(item => `
+          <div class="eco-wish-item" data-id="${item.id}">
+            <div class="eco-wish-info">
+              <img src="${item.image || 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=300&q=80'}" alt="${item.name}" class="eco-wish-img" />
+              <div style="min-width:0;">
+                <h4 class="eco-wish-name">${item.name}</h4>
+                <div class="eco-wish-price">₹${(item.price || 750).toLocaleString("en-IN")}</div>
+              </div>
+            </div>
+            <div class="eco-wish-actions">
+              <button type="button" class="btn-primary eco-wish-move" data-id="${item.id}" style="padding:0.38rem 0.75rem;font-size:0.72rem;cursor:pointer;border-radius:999px;">Move to Cart</button>
+              <button type="button" class="eco-wish-remove" data-id="${item.id}" style="background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:0.9rem;padding:0.3rem;">✕</button>
+            </div>
+          </div>
+        `).join("");
+
+        // Wire move to cart & remove
+        container.querySelectorAll(".eco-wish-move").forEach(btn => {
+          btn.onclick = () => {
+            const id = btn.getAttribute("data-id");
+            const list = getWishlist();
+            const item = list.find(x => String(x.id) === String(id));
+            if (item) {
+              if (typeof addToCart === "function") {
+                addToCart(item.id);
+              } else {
+                // fallback cart storage if addToCart isn't global
+                try {
+                  const cart = JSON.parse(localStorage.getItem("ecostore_cart") || "[]");
+                  cart.push(item);
+                  localStorage.setItem("ecostore_cart", JSON.stringify(cart));
+                } catch(e){}
+              }
+              btn.textContent = "✓ Added";
+              setTimeout(() => {
+                const updated = list.filter(x => String(x.id) !== String(id));
+                saveWishlist(updated);
+                renderWishlistDrawer();
+                syncCardHearts();
+              }, 600);
+            }
+          };
+        });
+
+        container.querySelectorAll(".eco-wish-remove").forEach(btn => {
+          btn.onclick = () => {
+            const id = btn.getAttribute("data-id");
+            const updated = getWishlist().filter(x => String(x.id) !== String(id));
+            saveWishlist(updated);
+            renderWishlistDrawer();
+            syncCardHearts();
+          };
+        });
+      }
+
+      function syncCardHearts() {
+        const list = getWishlist();
+        const ids = list.map(x => String(x.id));
+
+        document.querySelectorAll(".product-card, [data-product-id]").forEach(card => {
+          const btn = card.querySelector("button[aria-label*='wishlist' i], .wishlist-btn, button:has(svg)");
+          if (!btn) return;
+          const pid = card.getAttribute("data-product-id") || card.dataset.id || card.querySelector("[data-id]")?.getAttribute("data-id") || "1";
+          const isSaved = ids.includes(String(pid)) || ids.some(id => card.textContent.includes(id));
+          if (isSaved) {
+            btn.classList.add("active");
+          } else {
+            btn.classList.remove("active");
+          }
+        });
+      }
+
+      // Attach click listeners to product card heart buttons
+      document.addEventListener("click", (e) => {
+        const heartBtn = e.target.closest("button[aria-label*='wishlist' i], .wishlist-btn");
+        if (!heartBtn) return;
+        const card = heartBtn.closest(".product-card, [data-product-id], div");
+        if (!card) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const name = card.querySelector("h3, h4, .product-title")?.textContent?.trim() || "Eco Essential";
+        const priceTxt = card.querySelector(".price, .product-price")?.textContent || "750";
+        const price = parseInt(priceTxt.replace(/[^\d]/g, ""), 10) || 750;
+        const img = card.querySelector("img")?.src || "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=300&q=80";
+        const id = card.getAttribute("data-product-id") || card.dataset.id || name.toLowerCase().replace(/\s+/g, "-");
+
+        let list = getWishlist();
+        const idx = list.findIndex(x => String(x.id) === String(id));
+        if (idx > -1) {
+          list.splice(idx, 1);
+          heartBtn.classList.remove("active");
+        } else {
+          list.push({ id, name, price, image: img });
+          heartBtn.classList.add("active");
+          // Open drawer briefly to confirm save
+          renderWishlistDrawer();
+          document.getElementById("eco-wishlist-backdrop").classList.add("open");
+        }
+        saveWishlist(list);
+      });
+
+      updateWishlistBadge(getWishlist().length);
+      syncCardHearts();
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initLuxuryWishlistAndHeader);
+    } else {
+      initLuxuryWishlistAndHeader();
+    }
+    setTimeout(initLuxuryWishlistAndHeader, 400);
+  })();
+</script>
 </body></html>
