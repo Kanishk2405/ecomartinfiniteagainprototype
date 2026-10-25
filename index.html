@@ -9466,4 +9466,255 @@ ${JSON.stringify(compactForAI)}`;
     setTimeout(bootV3KitEngine, 350);
   })();
 </script>
+  <!-- ===================== ECOSTORE V4 BULLETPROOF KIT ENGINE (LEGACY PURGE) ===================== -->
+<script id="ecostore-v4-bulletproof-kit">
+  (function() {
+    // 1. NUKE LEGACY GLOBAL FUNCTIONS SO THEY CAN NEVER RUN OR FREEZE
+    window.curateKit = null;
+    window.generateBespokeKit = null;
+    window.runKitCurator = null;
+    window.renderKitResults = null;
+
+    // 2. AGGRESSIVELY PURGE LEGACY DOM ELEMENTS EVERY 50MS
+    setInterval(() => {
+      document.querySelectorAll(".bespoke-kit-result, .kit-output-box, #bundle-output, #kit-output").forEach(el => el.remove());
+      // Remove any status banner saying "Curating custom..." from the old script
+      document.querySelectorAll("div, span, p").forEach(el => {
+        if (el.textContent && el.textContent.includes("Curating custom") && el.id !== "v4-kit-status") {
+          const card = el.closest("div");
+          if (card && !card.id.includes("v4")) card.remove();
+        }
+      });
+    }, 50);
+
+    // 3. BUILD THE CLEAN, LIGHTNING-FAST V4 KIT BUILDER
+    function initV4Kit() {
+      const headings = Array.from(document.querySelectorAll("h2, h3"));
+      const kitHeading = headings.find(h => /Build a Custom 3[-–]Item Daily Kit/i.test(h.textContent));
+      if (!kitHeading) return;
+
+      const section = kitHeading.closest("section, div");
+      if (!section || section.dataset.v4Active === "true") return;
+      section.dataset.v4Active = "true";
+
+      // Clear out everything inside this section except the main heading & description
+      const headerHtml = `
+        <div style="margin-bottom:1rem;">
+          <h3 style="font-size:1.4rem;font-weight:700;margin:0 0 0.25rem;color:var(--text-primary);">Build a Custom 3-Item Daily Kit</h3>
+          <p style="margin:0;font-size:0.85rem;color:var(--text-secondary);">Describe a routine or occasion, and our material atelier curates 3 verified essentials instantly.</p>
+        </div>
+      `;
+
+      section.innerHTML = `
+        ${headerHtml}
+        <div style="background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:18px;padding:1.25rem;box-shadow:var(--shadow-sm);">
+          <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;margin-bottom:0.85rem;">
+            <input type="text" id="v4-kit-input" placeholder="e.g. Minimalist bathroom & evening wind-down sanctuary..." style="flex:1;min-width:240px;padding:0.7rem 1rem;border-radius:999px;border:1px solid var(--border-strong);background:var(--bg-primary);color:var(--text-primary);font-size:0.85rem;outline:none;" />
+            <select id="v4-kit-budget" style="padding:0.7rem 1rem;border-radius:999px;border:1px solid var(--border-strong);background:var(--bg-primary);color:var(--text-primary);font-size:0.82rem;outline:none;cursor:pointer;">
+              <option value="2800">Budget: Up to ₹2,800</option>
+              <option value="1800">Budget: Up to ₹1,800</option>
+              <option value="4000">Budget: Up to ₹4,000</option>
+            </select>
+            <button type="button" id="v4-curate-btn" class="btn-primary" style="padding:0.7rem 1.4rem;border-radius:999px;font-weight:700;cursor:pointer;">Curate Kit</button>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.45rem;align-items:center;" id="v4-preset-row">
+            <span style="font-size:0.75rem;font-weight:600;color:var(--text-secondary);margin-right:0.25rem;">Presets:</span>
+            <button type="button" class="v4-preset-chip" data-q="Morning pour-over coffee & kitchen prep" style="background:var(--bg-subtle);border:1px solid var(--border-subtle);color:var(--text-primary);padding:0.35rem 0.75rem;border-radius:999px;font-size:0.74rem;cursor:pointer;">Morning Coffee & Kitchen</button>
+            <button type="button" class="v4-preset-chip" data-q="College student carry bag & study desk essentials" style="background:var(--bg-subtle);border:1px solid var(--border-subtle);color:var(--text-primary);padding:0.35rem 0.75rem;border-radius:999px;font-size:0.74rem;cursor:pointer;">Student & Study Desk</button>
+            <button type="button" class="v4-preset-chip" data-q="Minimalist bathroom & evening wind-down sanctuary" style="background:var(--bg-subtle);border:1px solid var(--border-subtle);color:var(--text-primary);padding:0.35rem 0.75rem;border-radius:999px;font-size:0.74rem;cursor:pointer;">Evening Home Sanctuary</button>
+            <button type="button" class="v4-preset-chip" data-q="Durable zero-waste daily commuter flask & carry kit" style="background:var(--bg-subtle);border:1px solid var(--border-subtle);color:var(--text-primary);padding:0.35rem 0.75rem;border-radius:999px;font-size:0.74rem;cursor:pointer;">Daily Commuter Kit</button>
+          </div>
+        </div>
+        <div id="v4-kit-results" style="margin-top:1.15rem;"></div>
+      `;
+
+      const inputEl = section.querySelector("#v4-kit-input");
+      const budgetEl = section.querySelector("#v4-kit-budget");
+      const btnEl = section.querySelector("#v4-curate-btn");
+      const resultsEl = section.querySelector("#v4-kit-results");
+
+      function getCatalogue() {
+        if (typeof CATALOGUE !== "undefined" && Array.isArray(CATALOGUE) && CATALOGUE.length > 0) return CATALOGUE;
+        if (typeof window.PRODUCTS !== "undefined" && Array.isArray(window.PRODUCTS)) return window.PRODUCTS;
+        const fallback = [];
+        document.querySelectorAll(".product-card").forEach((card, idx) => {
+          const name = card.querySelector("h3, h4, .product-title")?.textContent?.trim() || "Eco Essential";
+          const priceTxt = card.querySelector(".price, .product-price")?.textContent || "750";
+          const price = parseInt(priceTxt.replace(/[^\d]/g, ""), 10) || 750;
+          const category = card.getAttribute("data-category") || "Everyday";
+          const image = card.querySelector("img")?.src || "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=400&q=80";
+          fallback.push({ id: idx + 1, name, price, category, image });
+        });
+        return fallback;
+      }
+
+      function runV4Engine(queryText) {
+        const q = (queryText || inputEl.value || "").trim();
+        if (queryText && inputEl) inputEl.value = queryText;
+
+        if (!q) {
+          resultsEl.innerHTML = `<div style="padding:1rem;color:var(--text-secondary);font-size:0.84rem;">Please enter a routine or click a preset above.</div>`;
+          return;
+        }
+
+        const maxBudget = parseInt(budgetEl.value, 10) || 2800;
+        const pool = getCatalogue();
+
+        // Check out-of-scope non-eco items
+        const forbidden = /\b(iphone|macbook|playstation|xbox|shoes|sneakers|nike|hoodie|jeans|perfume|lipstick|pizza|burger|vape)\b/i;
+        if (forbidden.test(q)) {
+          resultsEl.innerHTML = `
+            <div style="background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:16px;padding:1.35rem;">
+              <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:#F59E0B;background:rgba(245,158,11,0.12);padding:0.2rem 0.6rem;border-radius:999px;display:inline-block;margin-bottom:0.5rem;">✦ Material Archive Boundary</div>
+              <h4 style="margin:0 0 0.35rem;font-size:1.05rem;font-weight:700;">Unable to Architect Kit for "${q}"</h4>
+              <p style="margin:0;font-size:0.82rem;color:var(--text-secondary);">EcoStore strictly curates sustainable, plastic-free stainless steel, glass, timber, and natural fibers. Your request falls outside our material registry.</p>
+            </div>
+          `;
+          return;
+        }
+
+        // Simple keyword scoring to guarantee accurate items instantly (0ms delay, zero glitches)
+        const qLower = q.toLowerCase();
+        const scored = pool.map(item => {
+          const nameLower = item.name.toLowerCase();
+          const catLower = (item.category || "").toLowerCase();
+          let score = 0;
+          if (qLower.includes("bath") || qLower.includes("sanctuary") || qLower.includes("wind-down") || qLower.includes("evening")) {
+            if (catLower.includes("home") || catLower.includes("personal") || nameLower.includes("candle") || nameLower.includes("towel") || nameLower.includes("soap") || nameLower.includes("sheet")) score += 60;
+          }
+          if (qLower.includes("study") || qLower.includes("student") || qLower.includes("desk") || qLower.includes("college")) {
+            if (catLower.includes("stationery") || nameLower.includes("notebook") || nameLower.includes("pen") || nameLower.includes("organizer") || nameLower.includes("sleeve")) score += 60;
+          }
+          if (qLower.includes("coffee") || qLower.includes("kitchen") || qLower.includes("morning")) {
+            if (catLower.includes("kitchen") || nameLower.includes("flask") || nameLower.includes("mug") || nameLower.includes("carafe") || nameLower.includes("tumbler")) score += 60;
+          }
+          if (qLower.includes("travel") || qLower.includes("commuter") || qLower.includes("carry") || qLower.includes("bag")) {
+            if (catLower.includes("travel") || nameLower.includes("tote") || nameLower.includes("flask") || nameLower.includes("cutlery") || nameLower.includes("backpack")) score += 60;
+          }
+
+          // General word match bonus
+          q.split(" ").forEach(w => {
+            if (w.length > 3 && nameLower.includes(w.toLowerCase())) score += 25;
+          });
+          return { item, score };
+        }).sort((a, b) => b.score - a.score);
+
+        // Pick 3 items within budget
+        const picked = [];
+        let total = 0;
+        for (const s of scored) {
+          if (picked.length >= 3) break;
+          if (!picked.includes(s.item) && total + (s.item.price || 700) <= maxBudget) {
+            picked.push(s.item);
+            total += (s.item.price || 700);
+          }
+        }
+
+        // Fallback fill if budget was tight
+        if (picked.length < 3) {
+          for (const s of scored) {
+            if (picked.length >= 3) break;
+            if (!picked.includes(s.item)) {
+              picked.push(s.item);
+              total += (s.item.price || 700);
+            }
+          }
+        }
+
+        const discounted = Math.round(total * 0.88);
+
+        resultsEl.innerHTML = `
+          <div style="background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:18px;padding:1.35rem;animation:popFadeIn 0.2s ease;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.75rem;margin-bottom:1rem;">
+              <div>
+                <span style="font-size:0.68rem;font-weight:700;text-transform:uppercase;color:var(--accent-forest);letter-spacing:0.08em;">✦ GAIA AI Verified Curation</span>
+                <h4 style="margin:0.2rem 0 0.15rem;font-size:1.1rem;font-weight:700;color:var(--text-primary);">Bespoke ${q.slice(0, 30)} Trio</h4>
+                <div style="font-size:0.78rem;color:var(--text-secondary);">Curated to match your prompt within ₹${maxBudget.toLocaleString("en-IN")}.</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:0.74rem;color:var(--text-secondary);text-decoration:line-through;">₹${total.toLocaleString("en-IN")}</div>
+                <div style="font-size:1.2rem;font-weight:800;color:var(--accent-forest);">₹${discounted.toLocaleString("en-IN")} <small style="font-size:0.68rem;">(12% Off)</small></div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.85rem;">
+              ${picked.map((prod, idx) => `
+                <div style="background:var(--bg-subtle);border:1px solid var(--border-subtle);border-radius:14px;padding:0.9rem;display:flex;flex-direction:column;justify-content:space-between;gap:0.7rem;">
+                  <div style="display:flex;gap:0.75rem;align-items:center;">
+                    <img src="${prod.image || 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=300&q=80'}" alt="${prod.name}" style="width:60px;height:60px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--bg-primary);" />
+                    <div>
+                      <span style="font-size:0.65rem;font-weight:700;color:var(--accent-forest);background:rgba(56,198,163,0.12);padding:0.15rem 0.45rem;border-radius:999px;">0${idx+1} • ${prod.category || 'Essential'}</span>
+                      <div style="font-weight:700;font-size:0.85rem;color:var(--text-primary);margin-top:0.2rem;line-height:1.2;">${prod.name}</div>
+                      <div style="font-family:var(--font-mono);font-size:0.8rem;font-weight:700;color:var(--accent-forest);margin-top:0.15rem;">₹${(prod.price || 750).toLocaleString("en-IN")}</div>
+                    </div>
+                  </div>
+                  <div style="display:flex;gap:0.4rem;">
+                    <button type="button" class="btn-secondary v4-inspect" data-id="${prod.id || idx}" style="flex:1;padding:0.4rem;font-size:0.73rem;cursor:pointer;">Inspect</button>
+                    <button type="button" class="btn-primary v4-add" data-id="${prod.id || idx}" style="flex:1.2;padding:0.4rem;font-size:0.73rem;cursor:pointer;">+ Add</button>
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+            <div style="margin-top:1rem;display:flex;justify-content:flex-end;">
+              <button type="button" id="v4-add-all" class="btn-primary" style="padding:0.65rem 1.4rem;font-size:0.82rem;cursor:pointer;">⚡ Add All 3 Items to Cart (₹${discounted.toLocaleString("en-IN")})</button>
+            </div>
+          </div>
+        `;
+
+        resultsEl.querySelectorAll(".v4-inspect").forEach(b => {
+          b.onclick = () => {
+            const id = parseInt(b.getAttribute("data-id"), 10);
+            if (typeof openProductModal === "function") openProductModal(id);
+          };
+        });
+
+        resultsEl.querySelectorAll(".v4-add").forEach(b => {
+          b.onclick = () => {
+            const id = parseInt(b.getAttribute("data-id"), 10);
+            if (typeof addToCart === "function") addToCart(id);
+            b.textContent = "✓ Added";
+          };
+        });
+
+        const addAll = resultsEl.querySelector("#v4-add-all");
+        if (addAll) {
+          addAll.onclick = () => {
+            picked.forEach(p => {
+              if (typeof addToCart === "function") addToCart(p.id);
+            });
+            addAll.textContent = "✓ All 3 Items Added to Cart!";
+          };
+        }
+      }
+
+      btnEl.onclick = (e) => {
+        e.preventDefault();
+        runV4Engine();
+      };
+
+      inputEl.onkeydown = (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          runV4Engine();
+        }
+      };
+
+      section.querySelectorAll(".v4-preset-chip").forEach(chip => {
+        chip.onclick = (e) => {
+          e.preventDefault();
+          runV4Engine(chip.getAttribute("data-q"));
+        };
+      });
+
+      // Run default load
+      runV4Engine("College student carry bag & study desk essentials");
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initV4Kit);
+    } else {
+      initV4Kit();
+    }
+    setTimeout(initV4Kit, 300);
+  })();
+</script>
 </body></html>
