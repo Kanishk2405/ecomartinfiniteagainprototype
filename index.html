@@ -9717,4 +9717,326 @@ ${JSON.stringify(compactForAI)}`;
     setTimeout(initV4Kit, 300);
   })();
 </script>
+  <!-- ===================== ECOSTORE V5 SINGLE-INSTANCE LIVE AI KIT ENGINE ===================== -->
+<script id="ecostore-v5-master-kit">
+  (function() {
+    // 1. Completely eliminate duplicate kit sections on sight
+    function purgeDuplicates() {
+      const sections = Array.from(document.querySelectorAll("section, div, .bundle-curator-card")).filter(el => {
+        return (el.textContent || "").includes("Build a Custom 3-Item Daily Kit");
+      });
+      if (sections.length > 1) {
+        for (let i = 1; i < sections.length; i++) {
+          sections[i].remove();
+        }
+      }
+    }
+    setInterval(purgeDuplicates, 100);
+
+    function initV5Kit() {
+      const headings = Array.from(document.querySelectorAll("h2, h3"));
+      const kitHeading = headings.find(h => /Build a Custom 3[-–]Item Daily Kit/i.test(h.textContent));
+      if (!kitHeading) return;
+
+      const targetContainer = kitHeading.closest("section, .bundle-curator-card, div");
+      if (!targetContainer || targetContainer.dataset.v5Built === "true") return;
+
+      targetContainer.dataset.v5Built = "true";
+      targetContainer.style.display = "block";
+
+      // Rebuild a single pristine instance
+      targetContainer.innerHTML = `
+        <div style="margin-bottom:1rem;">
+          <h3 style="font-size:1.35rem;font-weight:700;margin:0 0 0.2rem;color:var(--text-primary);">Build a Custom 3-Item Daily Kit</h3>
+          <p style="margin:0;font-size:0.83rem;color:var(--text-secondary);">Describe your daily routine or occasion, and GAIA AI will consult the material archive to curate 3 precise essentials.</p>
+        </div>
+        <div style="background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:18px;padding:1.25rem;box-shadow:var(--shadow-sm);">
+          <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;margin-bottom:0.85rem;">
+            <input type="text" id="v5-input" placeholder="e.g. Minimalist bathroom & evening wind-down sanctuary..." style="flex:1;min-width:240px;padding:0.7rem 1rem;border-radius:999px;border:1px solid var(--border-strong);background:var(--bg-primary);color:var(--text-primary);font-size:0.84rem;outline:none;" />
+            <select id="v5-budget" style="padding:0.7rem 1rem;border-radius:999px;border:1px solid var(--border-strong);background:var(--bg-primary);color:var(--text-primary);font-size:0.82rem;outline:none;cursor:pointer;">
+              <option value="2800">Budget: Up to ₹2,800</option>
+              <option value="1800">Budget: Up to ₹1,800</option>
+              <option value="4000">Budget: Up to ₹4,000</option>
+            </select>
+            <button type="button" id="v5-btn" class="btn-primary" style="padding:0.7rem 1.4rem;border-radius:999px;font-weight:700;cursor:pointer;">Curate Kit</button>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.45rem;align-items:center;">
+            <span style="font-size:0.74rem;font-weight:600;color:var(--text-secondary);margin-right:0.2rem;">Presets:</span>
+            <button type="button" class="v5-chip" data-q="Morning pour-over coffee & zero-waste kitchen prep">Morning Coffee & Kitchen</button>
+            <button type="button" class="v5-chip" data-q="College student carry bag & study desk essentials">Student & Study Desk</button>
+            <button type="button" class="v5-chip" data-q="Minimalist bathroom & evening wind-down sanctuary">Evening Home Sanctuary</button>
+            <button type="button" class="v5-chip" data-q="Durable zero-waste daily commuter flask & carry kit">Daily Commuter Kit</button>
+          </div>
+        </div>
+        <div id="v5-results" style="margin-top:1.15rem;"></div>
+      `;
+
+      targetContainer.querySelectorAll(".v5-chip").forEach(c => {
+        c.style.cssText = "background:var(--bg-subtle);border:1px solid var(--border-subtle);color:var(--text-primary);padding:0.35rem 0.75rem;border-radius:999px;font-size:0.73rem;cursor:pointer;";
+      });
+
+      const inputEl = targetContainer.querySelector("#v5-input");
+      const budgetEl = targetContainer.querySelector("#v5-budget");
+      const btnEl = targetContainer.querySelector("#v5-btn");
+      const resultsEl = targetContainer.querySelector("#v5-results");
+
+      function getCatalogue() {
+        if (typeof CATALOGUE !== "undefined" && Array.isArray(CATALOGUE) && CATALOGUE.length > 0) return CATALOGUE;
+        if (typeof window.PRODUCTS !== "undefined" && Array.isArray(window.PRODUCTS)) return window.PRODUCTS;
+        const fallback = [];
+        document.querySelectorAll(".product-card").forEach((card, idx) => {
+          const name = card.querySelector("h3, h4, .product-title")?.textContent?.trim() || "Eco Essential";
+          const priceTxt = card.querySelector(".price, .product-price")?.textContent || "750";
+          const price = parseInt(priceTxt.replace(/[^\d]/g, ""), 10) || 750;
+          const category = card.getAttribute("data-category") || "Everyday";
+          const image = card.querySelector("img")?.src || "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=400&q=80";
+          fallback.push({ id: idx + 1, name, price, category, image });
+        });
+        return fallback;
+      }
+
+      async function handleCuration(overrideQuery) {
+        const query = (overrideQuery || inputEl.value || "").trim();
+        if (overrideQuery) inputEl.value = overrideQuery;
+
+        if (!query) {
+          resultsEl.innerHTML = `<div style="padding:1rem;color:var(--text-secondary);font-size:0.83rem;">Please enter a description or click a preset above.</div>`;
+          return;
+        }
+
+        const maxBudget = parseInt(budgetEl.value, 10) || 2800;
+        const pool = getCatalogue();
+
+        resultsEl.innerHTML = `
+          <div style="background:var(--bg-subtle);border:1px solid var(--border-strong);border-radius:16px;padding:1.4rem;text-align:center;">
+            <div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-forest);margin-bottom:0.3rem;">✦ GAIA AI Live Consultation in Progress</div>
+            <div style="font-size:0.86rem;color:var(--text-secondary);">Consulting archival material standards for <strong>"${query}"</strong> within ₹${maxBudget.toLocaleString("en-IN")}...</div>
+          </div>
+        `;
+
+        const forbidden = /\b(iphone|macbook|playstation|xbox|shoes|sneakers|nike|hoodie|jeans|perfume|lipstick|pizza|burger|vape|furniture|bed|sofa)\b/i;
+        if (forbidden.test(query)) {
+          renderNotice("Material Archive Boundary Notice", `Your request ("${query}") includes product categories outside EcoStore's sustainable material registry. We exclusively curate plastic-free stainless steel, glass, timber, and natural-fiber essentials.`);
+          return;
+        }
+
+        // Consult Live AI via /api/chat with timeout
+        let aiResponse = null;
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+          const compactPool = pool.slice(0, 90).map(p => ({ id: p.id, name: p.name, category: p.category, price: p.price }));
+          const systemPrompt = `You are GAIA, Lead Material Architect at EcoStore.
+User Prompt: "${query}"
+Max Budget: ₹${maxBudget}.
+
+Select exactly 3 items from the catalogue below that best fulfill "${query}" without exceeding ₹${maxBudget} combined.
+Return ONLY valid raw JSON (no markdown fences):
+{
+  "available": true,
+  "kitTitle": "Short title",
+  "reason": "1 sentence curation philosophy",
+  "items": [
+    { "id": 1, "name": "Item Name", "role": "1 sentence role" }
+  ]
+}
+
+Catalogue:
+${JSON.stringify(compactPool)}`;
+
+          const resp = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              prompt: systemPrompt,
+              message: systemPrompt,
+              contents: [{ role: "user", parts: [{ text: systemPrompt }] }]
+            }),
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+
+          if (resp.ok) {
+            const data = await resp.json();
+            const raw = data.reply || data.text || data.response || data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+            const m = raw.match(/\{[\s\S]*\}/);
+            if (m) {
+              aiResponse = JSON.parse(m[0]);
+            }
+          }
+        } catch (err) {
+          console.warn("AI Live API fallback triggered:", err);
+        }
+
+        if (!aiResponse || !aiResponse.available || !aiResponse.items || aiResponse.items.length === 0) {
+          aiResponse = semanticMatchFallback(query, maxBudget, pool);
+        }
+
+        if (!aiResponse.available) {
+          renderNotice(aiResponse.title || "Atelier Curation Constraint", aiResponse.reason);
+          return;
+        }
+
+        const resolved = [];
+        for (const itemRef of (aiResponse.items || [])) {
+          const found = pool.find(p => p.id === itemRef.id || (p.name || "").toLowerCase() === (itemRef.name || "").toLowerCase())
+                     || pool.find(p => (p.name || "").toLowerCase().includes((itemRef.name || "").toLowerCase().slice(0, 10)));
+          if (found && !resolved.some(r => r.product.id === found.id)) {
+            resolved.push({ product: found, role: itemRef.role || "Selected for your requested routine." });
+          }
+        }
+
+        if (resolved.length < 3) {
+          for (const p of pool) {
+            if (resolved.length >= 3) break;
+            if (!resolved.some(r => r.product.id === p.id) && resolved.reduce((s, x) => s + x.product.price, 0) + p.price <= maxBudget) {
+              resolved.push({ product: p, role: "Essential complement for your bespoke kit." });
+            }
+          }
+        }
+
+        const rawSum = resolved.reduce((s, r) => s + (r.product.price || 750), 0);
+        const discounted = Math.round(rawSum * 0.88);
+
+        resultsEl.innerHTML = `
+          <div style="background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:18px;padding:1.35rem;animation:popFadeIn 0.2s ease;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.75rem;margin-bottom:1rem;">
+              <div>
+                <span style="font-size:0.68rem;font-weight:700;text-transform:uppercase;color:var(--accent-forest);letter-spacing:0.08em;">✦ GAIA AI Verified Curation</span>
+                <h4 style="margin:0.2rem 0 0.15rem;font-size:1.15rem;font-weight:700;color:var(--text-primary);">${aiResponse.kitTitle || "Bespoke Purpose Kit"}</h4>
+                <div style="font-size:0.78rem;color:var(--text-secondary);">${aiResponse.reason || ""}</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:0.74rem;color:var(--text-secondary);text-decoration:line-through;">₹${rawSum.toLocaleString("en-IN")}</div>
+                <div style="font-size:1.25rem;font-weight:800;color:var(--accent-forest);">₹${discounted.toLocaleString("en-IN")} <small style="font-size:0.68rem;">(12% Privilege)</small></div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.85rem;">
+              ${resolved.map((entry, idx) => `
+                <div style="background:var(--bg-subtle);border:1px solid var(--border-subtle);border-radius:14px;padding:0.95rem;display:flex;flex-direction:column;justify-content:space-between;gap:0.7rem;">
+                  <div>
+                    <div style="display:flex;gap:0.75rem;align-items:center;margin-bottom:0.5rem;">
+                      <img src="${entry.product.image}" alt="${entry.product.name}" style="width:62px;height:62px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--bg-primary);border:1px solid var(--border-subtle);" onerror="this.src='https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=300&q=80'" />
+                      <div>
+                        <span style="font-size:0.65rem;font-weight:700;color:var(--accent-forest);background:rgba(56,198,163,0.12);padding:0.15rem 0.45rem;border-radius:999px;">0${idx+1} • ${entry.product.category || 'Essential'}</span>
+                        <div style="font-weight:700;font-size:0.85rem;color:var(--text-primary);margin-top:0.2rem;line-height:1.2;">${entry.product.name}</div>
+                        <div style="font-family:var(--font-mono);font-size:0.8rem;font-weight:700;color:var(--accent-forest);margin-top:0.15rem;">₹${(entry.product.price || 750).toLocaleString("en-IN")}</div>
+                      </div>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--text-secondary);line-height:1.35;"><strong>Role:</strong> ${entry.role}</div>
+                  </div>
+                  <div style="display:flex;gap:0.4rem;">
+                    <button type="button" class="btn-secondary v5-inspect" data-id="${entry.product.id || idx}" style="flex:1;padding:0.4rem;font-size:0.73rem;cursor:pointer;">Inspect</button>
+                    <button type="button" class="btn-primary v5-add" data-id="${entry.product.id || idx}" style="flex:1.2;padding:0.4rem;font-size:0.73rem;cursor:pointer;">+ Add</button>
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+            <div style="margin-top:1.05rem;display:flex;justify-content:flex-end;">
+              <button type="button" id="v5-add-all" class="btn-primary" style="padding:0.68rem 1.45rem;font-size:0.82rem;cursor:pointer;">⚡ Add All 3 Items to Cart (₹${discounted.toLocaleString("en-IN")})</button>
+            </div>
+          </div>
+        `;
+
+        resultsEl.querySelectorAll(".v5-inspect").forEach(b => {
+          b.onclick = () => {
+            const id = parseInt(b.getAttribute("data-id"), 10);
+            if (typeof openProductModal === "function") openProductModal(id);
+          };
+        });
+
+        resultsEl.querySelectorAll(".v5-add").forEach(b => {
+          b.onclick = () => {
+            const id = parseInt(b.getAttribute("data-id"), 10);
+            if (typeof addToCart === "function") addToCart(id);
+            b.textContent = "✓ Added";
+          };
+        });
+
+        const addAll = resultsEl.querySelector("#v5-add-all");
+        if (addAll) {
+          addAll.onclick = () => {
+            resolved.forEach(r => {
+              if (typeof addToCart === "function") addToCart(r.product.id);
+            });
+            addAll.textContent = "✓ Complete Kit Added to Cart!";
+          };
+        }
+      }
+
+      function renderNotice(title, text) {
+        resultsEl.innerHTML = `
+          <div style="background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:18px;padding:1.4rem;">
+            <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:#F59E0B;background:rgba(245,158,11,0.12);padding:0.2rem 0.6rem;border-radius:999px;display:inline-block;margin-bottom:0.5rem;">✦ ${title}</div>
+            <h4 style="margin:0 0 0.35rem;font-size:1.1rem;font-weight:700;">Request Boundary Notice</h4>
+            <p style="margin:0;font-size:0.83rem;color:var(--text-secondary);line-height:1.5;">${text}</p>
+          </div>
+        `;
+      }
+
+      function semanticMatchFallback(q, maxBudget, pool) {
+        const scored = pool.map(item => {
+          const nameLower = item.name.toLowerCase();
+          const catLower = (item.category || "").toLowerCase();
+          let score = 0;
+          q.split(" ").forEach(w => {
+            if (w.length > 2 && nameLower.includes(w)) score += 35;
+            if (w.length > 2 && catLower.includes(w)) score += 20;
+          });
+          return { item, score };
+        }).sort((a, b) => b.score - a.score);
+
+        const picked = [];
+        let sum = 0;
+        for (const s of scored) {
+          if (picked.length >= 3) break;
+          if (!picked.includes(s.item) && sum + (s.item.price || 700) <= maxBudget) {
+            picked.push(s.item);
+            sum += (s.item.price || 700);
+          }
+        }
+
+        if (picked.length === 0) {
+          return { available: false, title: "Budget Ceiling Constraint", reason: `Assembling verified items for "${q}" exceeds your selected ₹${maxBudget.toLocaleString("en-IN")} ceiling.` };
+        }
+
+        return {
+          available: true,
+          kitTitle: `Verified ${q.slice(0, 26)} Trio`,
+          reason: `Archival essentials matched to your prompt parameters.`,
+          items: picked.map(p => ({ id: p.id, name: p.name, role: `Selected to support your "${q}" routine.` }))
+        };
+      }
+
+      btnEl.onclick = (e) => {
+        e.preventDefault();
+        handleCuration();
+      };
+
+      inputEl.onkeydown = (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleCuration();
+        }
+      };
+
+      targetContainer.querySelectorAll(".v5-chip").forEach(chip => {
+        chip.onclick = (e) => {
+          e.preventDefault();
+          handleCuration(chip.getAttribute("data-q"));
+        };
+      });
+
+      handleCuration("Morning pour-over coffee & zero-waste kitchen prep");
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initV5Kit);
+    } else {
+      initV5Kit();
+    }
+    setTimeout(initV5Kit, 300);
+  })();
+</script>
 </body></html>
