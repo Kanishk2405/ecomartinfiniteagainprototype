@@ -8402,4 +8402,463 @@
     }
   })();
 </script>
+  <!-- ===================== ECOSTORE V2 PALETTE CLEANUP & LIVE AI KIT ENGINE ===================== -->
+<script id="ecostore-v2-ai-kit-and-palette-fix">
+  (function() {
+    // 1. CLEAN 8-PALETTE LIST (AQUAMAR REMOVED, DAYLIGHT LAST BEFORE CUSTOM)
+    const CLEAN_PALETTES = [
+      { id: "forest", name: "Forest", dots: ["#34D399", "#10B981", "#A7F3D0"] },
+      { id: "ocean", name: "Ocean", dots: ["#38BDF8", "#0284C7", "#BAE6FD"] },
+      { id: "sunset", name: "Sunset", dots: ["#FB923C", "#EA580C", "#FED7AA"] },
+      { id: "lavender", name: "Lavender", dots: ["#C084FC", "#9333EA", "#E9D5FF"] },
+      { id: "meadow", name: "Meadow", dots: ["#A3E635", "#65A30D", "#D9F99D"] },
+      { id: "coral", name: "Coral", dots: ["#FB7185", "#E11D48", "#FECDD3"] },
+      { id: "midnight", name: "Midnight", dots: ["#818CF8", "#4F46E5", "#C7D2FE"] },
+      { id: "light", name: "Daylight", dots: ["#177A63", "#EBF1EE", "#0B201C"] }
+    ];
+
+    function upgradePaletteMenu() {
+      let currentTheme = localStorage.getItem("ecostore_theme") || "forest";
+      if (currentTheme === "aquamar") {
+        currentTheme = "forest";
+        localStorage.setItem("ecostore_theme", "forest");
+        document.documentElement.setAttribute("data-theme", "forest");
+      }
+
+      const triggerLabel = document.getElementById("eco-palette-trigger-label");
+      if (triggerLabel) {
+        const match = CLEAN_PALETTES.find(p => p.id === currentTheme);
+        triggerLabel.textContent = currentTheme === "custom"
+          ? ("✨ " + (localStorage.getItem("ecostore_custom_name") || "Custom"))
+          : (match ? match.name : "Forest");
+      }
+
+      const grid = document.getElementById("eco-palette-grid");
+      if (grid) {
+        const renderCleanChips = () => {
+          const activeId = document.documentElement.getAttribute("data-theme") || "forest";
+          grid.innerHTML = CLEAN_PALETTES.map(p => `
+            <button type="button" class="palette-chip ${activeId === p.id ? 'active' : ''}" data-palette="${p.id}">
+              <span class="swatch-dots">
+                <span style="background:${p.dots[0]}"></span>
+                <span style="background:${p.dots[1]}"></span>
+                <span style="background:${p.dots[2]}"></span>
+              </span>
+              <span>${p.name}</span>
+            </button>
+          `).join("");
+
+          grid.querySelectorAll(".palette-chip").forEach(chip => {
+            chip.onclick = (e) => {
+              e.stopPropagation();
+              const pid = chip.getAttribute("data-palette");
+              document.documentElement.setAttribute("data-theme", pid);
+              localStorage.setItem("ecostore_theme", pid);
+              const found = CLEAN_PALETTES.find(x => x.id === pid);
+              if (found && triggerLabel) triggerLabel.textContent = found.name;
+              renderCleanChips();
+            };
+          });
+        };
+        renderCleanChips();
+
+        const btn = document.getElementById("eco-palette-btn");
+        if (btn) {
+          btn.addEventListener("click", renderCleanChips);
+        }
+      }
+    }
+
+    // 2. REMOVE DUPLICATE OLD KIT BOX & WIRE LIVE AI CURATION
+    function initLiveAIKitCurator() {
+      const buttons = Array.from(document.querySelectorAll("button"));
+      const curateBtn = buttons.find(b => /curate\s*kit/i.test(b.textContent));
+      if (!curateBtn) return;
+
+      const kitSection = curateBtn.closest("section, .bundle-curator-card, .kit-builder-box, div");
+      if (!kitSection) return;
+
+      // Hide any legacy hardcoded "Everyday Zero-Waste Trio" / "+ BESPOKE RITUAL KIT" box inside the section
+      Array.from(kitSection.children).forEach(child => {
+        if (child.id !== "instant-kit-results" && /BESPOKE RITUAL KIT|Everyday Zero-Waste Trio/i.test(child.textContent || "")) {
+          child.style.display = "none";
+        }
+      });
+      // Also check deeper containers that hold the old preset trio
+      kitSection.querySelectorAll("div").forEach(div => {
+        if (div.id !== "instant-kit-results" && !div.querySelector("input") && /BESPOKE RITUAL KIT|Everyday Zero-Waste Trio/i.test(div.innerHTML || "")) {
+          if (div.parentElement === kitSection || div.classList.contains("bundle-result") || div.classList.contains("kit-output")) {
+            div.style.display = "none";
+          }
+        }
+      });
+
+      const promptInput = kitSection.querySelector("input[type='text'], input:not([type]), textarea");
+      const budgetSelect = kitSection.querySelector("select");
+
+      let resultsBox = document.getElementById("instant-kit-results");
+      if (!resultsBox) {
+        resultsBox = document.createElement("div");
+        resultsBox.id = "instant-kit-results";
+        resultsBox.style.marginTop = "1.25rem";
+        kitSection.appendChild(resultsBox);
+      }
+
+      // Gather the real catalogue items
+      function getCataloguePool() {
+        if (typeof CATALOGUE !== "undefined" && Array.isArray(CATALOGUE) && CATALOGUE.length > 0) return CATALOGUE;
+        if (typeof window.PRODUCTS !== "undefined" && Array.isArray(window.PRODUCTS)) return window.PRODUCTS;
+        const scraped = [];
+        document.querySelectorAll(".product-card").forEach((card, idx) => {
+          const name = card.querySelector("h3, h4, .product-title")?.textContent?.trim();
+          const priceTxt = card.querySelector(".price, .product-price")?.textContent || "750";
+          const price = parseInt(priceTxt.replace(/[^\d]/g, ""), 10) || 750;
+          const category = card.getAttribute("data-category") || "Essential";
+          if (name) scraped.push({ id: idx + 1, name, price, category, description: card.textContent.trim().slice(0, 140) });
+        });
+        return scraped;
+      }
+
+      async function runAICuration(overridePrompt) {
+        if (overridePrompt && promptInput) promptInput.value = overridePrompt;
+        const userPrompt = (promptInput ? promptInput.value : "").trim();
+
+        if (!userPrompt) {
+          resultsBox.innerHTML = `
+            <div style="background:var(--bg-subtle);border:1px solid var(--border-strong);border-radius:16px;padding:1.25rem;color:var(--text-secondary);font-size:0.85rem;">
+              Please describe a routine, material preference, or specific items above so GAIA AI can architect your custom kit.
+            </div>
+          `;
+          return;
+        }
+
+        let maxBudget = 2800;
+        if (budgetSelect) {
+          const txt = budgetSelect.options[budgetSelect.selectedIndex]?.text || budgetSelect.value || "2800";
+          const m = txt.replace(/,/g, "").match(/\d+/);
+          if (m) maxBudget = parseInt(m[0], 10);
+        }
+
+        // Show sleek loading state while querying GAIA AI
+        resultsBox.innerHTML = `
+          <div style="background:var(--bg-subtle);border:1px solid var(--border-strong);border-radius:16px;padding:1.6rem;text-align:center;">
+            <div style="font-size:0.78rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent-forest);margin-bottom:0.4rem;">
+              ✦ GAIA AI Archival Curation in Progress
+            </div>
+            <div style="font-size:0.88rem;color:var(--text-secondary);">
+              Evaluating <strong>"${userPrompt}"</strong> against material longevity standards and your ₹${maxBudget.toLocaleString("en-IN")} ceiling...
+            </div>
+          </div>
+        `;
+
+        const pool = getCataloguePool();
+        // Condense catalogue for fast AI token inference
+        const compactCatalogue = pool.slice(0, 108).map(p => ({
+          id: p.id,
+          name: p.name,
+          category: p.category,
+          price: p.price
+        }));
+
+        const aiSystemInstruction = `You are GAIA, the Archival Material Curator for EcoStore (a sustainable, plastic-free everyday goods atelier offering ONLY Travel flasks/totebags/cutlery, Kitchen cast-iron/glass/bento/linen, Stationery brass pens/stone-paper notebooks/laptop sleeves, Personal Care safety razors/bamboo brushes/soaps, and Home beeswax candles/linen towels).
+User Request: "${userPrompt}"
+Maximum Total Budget for 3 items: ₹${maxBudget}.
+
+STRICT RULES:
+1. Every single item you pick MUST directly make sense for "${userPrompt}". NEVER put kitchen carafes or random stationery into a commuter/travel kit unless explicitly requested!
+2. If the user asks for something EcoStore does NOT carry (e.g. electronics, phones, gaming gear, sneakers, clothing, perishables, firearms, cars, plastic items, or luxury watches), OR if the requested items cannot be faithfully assembled from the provided catalogue within ₹${maxBudget}, you MUST set "available": false and write an ultra-refined, architectural "reason" explaining why our Material Atelier cannot fulfill that specific request.
+3. If the request CAN be faithfully fulfilled from the catalogue below, pick the 3 best-matching items whose combined price is <= ₹${maxBudget} (or as close as possible) and explain in 1 short sentence how each item serves "${userPrompt}".
+
+Respond ONLY with valid raw JSON (no markdown backticks) in this exact structure:
+{
+  "available": true or false,
+  "kitTitle": "Bespoke title for this kit",
+  "unavailableTitle": "Archival Curation Notice (only if available is false)",
+  "reason": "Refined explanation if available is false, or 1-sentence curation philosophy if true",
+  "items": [
+    { "id": 1, "name": "Exact Item Name from Catalogue", "role": "1-sentence role tailored to the prompt" }
+  ]
+}
+
+Catalogue JSON:
+${JSON.stringify(compactCatalogue)}`;
+
+        let aiDecision = null;
+
+        try {
+          const resp = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              prompt: aiSystemInstruction,
+              message: aiSystemInstruction,
+              contents: [{ role: "user", parts: [{ text: aiSystemInstruction }] }]
+            })
+          });
+
+          if (resp.ok) {
+            const data = await resp.json();
+            const rawText = data.reply || data.text || data.response || data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+            const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+              aiDecision = JSON.parse(jsonMatch[0]);
+            }
+          }
+        } catch (err) {
+          console.warn("GAIA Kit API fallback triggered:", err);
+        }
+
+        // Strict local verification fallback if API timed out or returned non-JSON
+        if (!aiDecision) {
+          aiDecision = strictSemanticVerify(userPrompt, maxBudget, pool);
+        }
+
+        // Render Unavailable / Out-of-Scope Luxury Notice
+        if (!aiDecision.available || !Array.isArray(aiDecision.items) || aiDecision.items.length === 0) {
+          resultsBox.innerHTML = `
+            <div style="background:var(--bg-subtle);border:1px solid var(--border-strong);border-radius:16px;padding:1.5rem;animation:popFadeIn 0.25s ease;">
+              <div style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:#F59E0B;background:rgba(245,158,11,0.12);padding:0.28rem 0.7rem;border-radius:999px;margin-bottom:0.65rem;">
+                ✦ ${aiDecision.unavailableTitle || "Atelier Curation Constraint"}
+              </div>
+              <h4 style="margin:0 0 0.45rem;font-size:1.08rem;font-weight:700;color:var(--text-primary);">
+                Unable to Architect a Verified Kit for "${userPrompt}"
+              </h4>
+              <p style="margin:0;font-size:0.84rem;line-height:1.55;color:var(--text-secondary);">
+                ${aiDecision.reason || "Our archival catalogue is strictly dedicated to low-impact stainless steel, borosilicate glass, FSC-certified timber, and organic natural-fiber essentials. Because your request calls for specifications outside our current material archive (or below our minimum craft threshold), GAIA declines to substitute unrelated items."}
+              </p>
+              <div style="margin-top:0.9rem;font-size:0.75rem;color:var(--text-muted);">
+                Try specifying routines within <strong>Travel & Commute</strong>, <strong>Zero-Waste Kitchen</strong>, <strong>Architectural Desk & Stationery</strong>, or <strong>Botanical Personal Care</strong>.
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        // Match AI selected items back to full catalogue objects
+        const resolvedItems = [];
+        for (const picked of aiDecision.items.slice(0, 3)) {
+          const found = pool.find(p => p.id === picked.id || p.name?.toLowerCase() === picked.name?.toLowerCase())
+                     || pool.find(p => p.name?.toLowerCase().includes((picked.name || "").toLowerCase().slice(0, 12)));
+          if (found && !resolvedItems.some(r => r.product.id === found.id)) {
+            resolvedItems.push({ product: found, role: picked.role });
+          }
+        }
+
+        if (resolvedItems.length === 0) {
+          resultsBox.innerHTML = `
+            <div style="background:var(--bg-subtle);border:1px solid var(--border-strong);border-radius:16px;padding:1.5rem;">
+              <h4 style="margin:0 0 0.4rem;font-size:1.05rem;font-weight:700;">✦ Archival Registry Notice</h4>
+              <p style="margin:0;font-size:0.84rem;color:var(--text-secondary);">
+                We currently do not hold exact material matches in our current seasonal archive for <strong>"${userPrompt}"</strong>. Rather than recommending unrelated pieces, we invite you to refine your prompt toward travel, kitchen, study, or home rituals.
+              </p>
+            </div>
+          `;
+          return;
+        }
+
+        const rawTotal = resolvedItems.reduce((sum, entry) => sum + (entry.product.price || 750), 0);
+        const discountedTotal = Math.round(rawTotal * 0.88);
+
+        resultsBox.innerHTML = `
+          <div style="background:var(--bg-subtle);border:1px solid var(--border-strong);border-radius:16px;padding:1.35rem;animation:popFadeIn 0.25s ease;">
+            <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:0.75rem;margin-bottom:1rem;">
+              <div>
+                <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-forest);">
+                  ✦ GAIA AI VERIFIED CURATION • "${userPrompt.toUpperCase()}"
+                </span>
+                <h4 style="margin:0.25rem 0 0.2rem;font-size:1.12rem;font-weight:700;color:var(--text-primary);">
+                  ${aiDecision.kitTitle || "Bespoke 3-Item Purpose Kit"}
+                </h4>
+                <div style="font-size:0.78rem;color:var(--text-secondary);">${aiDecision.reason || ""}</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:0.75rem;color:var(--text-secondary);text-decoration:line-through;">₹${rawTotal.toLocaleString("en-IN")}</div>
+                <div style="font-size:1.2rem;font-weight:800;color:var(--accent-forest);">
+                  ₹${discountedTotal.toLocaleString("en-IN")} <small style="font-size:0.7rem;font-weight:600;">(12% Kit Privilege)</small>
+                </div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:0.85rem;">
+              ${resolvedItems.map((entry, idx) => `
+                <div style="background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:14px;padding:0.95rem;display:flex;flex-direction:column;justify-content:space-between;gap:0.7rem;">
+                  <div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.45rem;">
+                      <span style="font-size:0.68rem;font-weight:700;color:var(--accent-forest);background:rgba(56,198,163,0.12);padding:0.2rem 0.55rem;border-radius:999px;">
+                        0${idx + 1} • ${entry.product.category || "Essential"}
+                      </span>
+                      <span style="font-family:var(--font-mono);font-size:0.82rem;font-weight:700;">₹${(entry.product.price || 750).toLocaleString("en-IN")}</span>
+                    </div>
+                    <div style="font-weight:700;font-size:0.92rem;color:var(--text-primary);margin-bottom:0.3rem;">${entry.product.name}</div>
+                    <div style="font-size:0.75rem;color:var(--text-secondary);line-height:1.4;">${entry.role || "Selected specifically for your requested routine."}</div>
+                  </div>
+                  <button type="button" class="btn-secondary kit-single-add" data-idx="${idx}" style="width:100%;padding:0.48rem;font-size:0.75rem;font-weight:600;cursor:pointer;">
+                    + Add to Cart
+                  </button>
+                </div>
+              `).join("")}
+            </div>
+            <div style="margin-top:1.05rem;display:flex;justify-content:flex-end;">
+              <button type="button" id="add-entire-curated-kit" class="btn-primary" style="padding:0.68rem 1.45rem;font-size:0.82rem;cursor:pointer;">
+                + Add Complete Kit to Cart (₹${discountedTotal.toLocaleString("en-IN")})
+              </button>
+            </div>
+          </div>
+        `;
+
+        resultsBox.querySelectorAll(".kit-single-add").forEach(btn => {
+          btn.onclick = () => {
+            const item = resolvedItems[parseInt(btn.getAttribute("data-idx"), 10)]?.product;
+            if (typeof addToCart === "function" && item?.id) addToCart(item.id);
+            btn.textContent = "✓ Added";
+          };
+        });
+
+        const addAll = resultsBox.querySelector("#add-entire-curated-kit");
+        if (addAll) {
+          addAll.onclick = () => {
+            resolvedItems.forEach(entry => {
+              if (typeof addToCart === "function" && entry.product?.id) addToCart(entry.product.id);
+            });
+            addAll.textContent = "✓ Complete Kit Added to Cart";
+          };
+        }
+      }
+
+      // Strict fallback verifier if user is offline or API route is unreachable
+      function strictSemanticVerify(query, maxBudget, pool) {
+        const q = query.toLowerCase();
+        // Check for out-of-catalogue categories first
+        const outOfScope = /\b(iphone|laptop|macbook|gpu|playstation|xbox|shoes|sneakers|nike|hoodie|jeans|shirt|dress|makeup|lipstick|perfume|car|bike|watch|earbuds|headphones|speaker|camera|tv|fridge|chocolate|pizza|burger|medicine|protein|dumbbells)\b/i;
+        if (outOfScope.test(q)) {
+          return {
+            available: false,
+            unavailableTitle: "Material Archive Boundary Notice",
+            reason: `Your request ("${query}") includes product categories outside EcoStore's architectural material registry. We strictly curate non-electronic, repairable stainless steel, borosilicate glass, FSC timber, and natural fiber goods—and never substitute unrelated items.`
+          };
+        }
+
+        const words = q.split(/[^a-z0-9]+/).filter(w => w.length > 2);
+        const categoryLocks = {
+          commute: ["Travel", "Stationery"],
+          commuter: ["Travel", "Stationery"],
+          travel: ["Travel", "Personal Care"],
+          work: ["Stationery", "Travel"],
+          study: ["Stationery"],
+          student: ["Stationery", "Travel"],
+          desk: ["Stationery"],
+          coffee: ["Kitchen", "Travel"],
+          kitchen: ["Kitchen"],
+          cook: ["Kitchen"],
+          home: ["Home", "Kitchen"],
+          sanctuary: ["Home", "Personal Care"],
+          evening: ["Home", "Personal Care"],
+          bath: ["Personal Care", "Home"]
+        };
+
+        let allowedCategories = new Set();
+        words.forEach(w => {
+          Object.keys(categoryLocks).forEach(k => {
+            if (w.includes(k) || k.includes(w)) {
+              categoryLocks[k].forEach(c => allowedCategories.add(c.toLowerCase()));
+            }
+          });
+        });
+
+        const scored = pool.map(item => {
+          const text = `${item.name} ${item.category} ${item.description || ""}`.toLowerCase();
+          let pts = 0;
+          words.forEach(w => {
+            if (item.name.toLowerCase().includes(w)) pts += 40;
+            else if (text.includes(w)) pts += 18;
+          });
+          if (allowedCategories.size > 0) {
+            const catMatch = Array.from(allowedCategories).some(c => (item.category || "").toLowerCase().includes(c));
+            if (catMatch) pts += 25;
+            else pts -= 50; // Heavily penalize off-category items like Kitchen Carafes in a Commuter kit!
+          }
+          return { item, pts };
+        }).filter(x => x.pts > 0).sort((a, b) => b.pts - a.pts);
+
+        if (scored.length < 2) {
+          return {
+            available: false,
+            unavailableTitle: "Bespoke Specification Unavailable",
+            reason: `We could not verify 3 authentic essentials in our current archive that strictly match "${query}" without compromising functional relevance.`
+          };
+        }
+
+        const chosen = [];
+        let sum = 0;
+        for (const s of scored) {
+          if (chosen.length >= 3) break;
+          if (sum + (s.item.price || 700) <= maxBudget) {
+            chosen.push({
+              id: s.item.id,
+              name: s.item.name,
+              role: `Precision-matched from our ${s.item.category} archive for your ${query} utility.`
+            });
+            sum += (s.item.price || 700);
+          }
+        }
+
+        if (chosen.length === 0) {
+          return {
+            available: false,
+            unavailableTitle: "Budget Ceiling Constraint",
+            reason: `While we hold pieces matching "${query}", assembling a 3-item kit exceeds your selected ₹${maxBudget.toLocaleString("en-IN")} ceiling. Please increase the budget filter to view verified combinations.`
+          };
+        }
+
+        return {
+          available: true,
+          kitTitle: `Verified ${query.slice(0, 28)} Trio`,
+          reason: `Strictly filtered to match your prompt parameters within your ₹${maxBudget.toLocaleString("en-IN")} ceiling.`,
+          items: chosen
+        };
+      }
+
+      // Bind button & Enter key cleanly
+      const cleanBtn = curateBtn.cloneNode(true);
+      curateBtn.parentNode.replaceChild(cleanBtn, curateBtn);
+      cleanBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        runAICuration();
+      };
+
+      if (promptInput) {
+        promptInput.onkeydown = (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            e.stopPropagation();
+            runAICuration();
+          }
+        };
+      }
+
+      // Bind preset chips below the input
+      kitSection.querySelectorAll(".preset-chip, button").forEach(chip => {
+        if (chip !== cleanBtn && !chip.id?.includes("add-entire") && chip.textContent.trim().length > 5 && !/curate|inspect|\+\s*add/i.test(chip.textContent)) {
+          chip.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            runAICuration(chip.textContent.trim());
+          };
+        }
+      });
+    }
+
+    function runFixes() {
+      upgradePaletteMenu();
+      initLiveAIKitCurator();
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", runFixes);
+    } else {
+      runFixes();
+    }
+    setTimeout(runFixes, 400);
+  })();
+</script>
 </body></html>
